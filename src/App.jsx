@@ -86,15 +86,22 @@ const Reveal = ({ children, delay = 0, className = "" }) => (
 const Hero = () => {
   return (
     <section className="relative min-h-screen flex items-center pt-20 px-6 overflow-hidden bg-black">
+      {/* Background large text for texture */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden z-0">
+        <span className="text-[80px] md:text-[150px] lg:text-[220px] font-black leading-none tracking-tighter text-white/[0.05]">
+          INCODEX
+        </span>
+      </div>
+
       {/* Background decoration with floating animation */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-10">
         <motion.div
           animate={{
             x: [0, 50, 0],
             y: [0, 30, 0],
           }}
           transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-          className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-white/5 blur-[120px] rounded-full"
+          className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-white/[0.03] blur-[120px] rounded-full"
         />
         <motion.div
           animate={{
@@ -102,11 +109,11 @@ const Hero = () => {
             y: [0, 50, 0],
           }}
           transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-white/5 blur-[120px] rounded-full"
+          className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-white/[0.03] blur-[120px] rounded-full"
         />
       </div>
 
-      <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 items-center relative z-10 py-12 md:py-20">
+      <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 items-center relative z-20 py-12 md:py-20">
         <div className="text-center lg:text-left max-w-2xl mx-auto lg:mx-0">
           <Reveal className="mx-auto lg:mx-0">
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-2 leading-[1.2] tracking-tight uppercase">
@@ -120,7 +127,7 @@ const Hero = () => {
           </Reveal>
           <Reveal delay={0.2} className="mx-auto lg:mx-0">
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-6 leading-[1.2] tracking-tight uppercase whitespace-nowrap">
-              one <span className="text-white/40">byte</span> at a time.
+              ONE <span className="text-white/40">BYTE</span> at a time.
             </h1>
           </Reveal>
 
@@ -147,55 +154,93 @@ const Hero = () => {
           </motion.div>
         </div>
 
-        {/* Right side animation - now responsive */}
-        <div className="relative h-[300px] md:h-[500px] lg:h-[600px] w-full flex items-center justify-center">
-          <motion.div
-            animate={{
-              rotate: 360,
-              scale: [1, 1.05, 1],
+        {/* Right side animation - Neural Data Grid */}
+        <div className="relative h-[400px] md:h-[500px] lg:h-[600px] w-full flex items-center justify-center z-10 overflow-hidden group">
+          {/* Subtle Grid Background */}
+          <div
+            className="absolute inset-0 opacity-[0.03]"
+            style={{
+              backgroundImage: 'linear-gradient(white 1px, transparent 1px), linear-gradient(90deg, white 1px, transparent 1px)',
+              backgroundSize: '40px 40px'
             }}
-            transition={{
-              duration: 20,
-              repeat: Infinity,
-              ease: "linear"
-            }}
-            className="absolute w-[280px] h-[280px] md:w-[400px] md:h-[400px] border border-white/10 rounded-full"
           />
-          <motion.div
-            animate={{
-              rotate: -360,
-              scale: [1, 1.1, 1],
-            }}
-            transition={{
-              duration: 15,
-              repeat: Infinity,
-              ease: "linear"
-            }}
-            className="absolute w-[200px] h-[200px] md:w-[300px] md:h-[300px] border border-white/20 rounded-[40%] flex items-center justify-center"
-          >
-            <div className="w-3 h-3 md:w-4 md:h-4 bg-white rounded-full shadow-[0_0_20px_white]" />
-          </motion.div>
 
-          {/* Floating bytes/dots */}
-          {[...Array(6)].map((_, i) => (
+          {/* Central Neural Core */}
+          <div className="relative z-20">
+            <motion.div
+              animate={{
+                scale: [1, 1.5, 1],
+                opacity: [0.3, 0.6, 0.3]
+              }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute inset-0 w-32 h-32 bg-white blur-[60px] -translate-x-1/2 -translate-y-1/2"
+            />
+            <div className="w-4 h-4 bg-white rounded-none rotate-45 shadow-[0_0_30px_white] relative z-30" />
+
+            {/* Core Orbitals */}
+            {[...Array(3)].map((_, i) => (
+              <motion.div
+                key={i}
+                animate={{ rotate: 360 }}
+                transition={{ duration: 12 + i * 4, repeat: Infinity, ease: "linear" }}
+                className="absolute border border-white/10"
+                style={{
+                  width: `${160 + i * 80}px`,
+                  height: `${160 + i * 80}px`,
+                  borderRadius: i % 2 === 0 ? '0%' : '50%',
+                  top: '50%',
+                  left: '50%',
+                  marginLeft: `-${(160 + i * 80) / 2}px`,
+                  marginTop: `-${(160 + i * 80) / 2}px`,
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Migrating Data Nodes (Bytes) */}
+          {[...Array(12)].map((_, i) => (
             <motion.div
               key={i}
+              initial={{
+                x: (Math.random() - 0.5) * 400,
+                y: (Math.random() - 0.5) * 400,
+                opacity: 0
+              }}
               animate={{
-                y: [0, -40, 0],
-                opacity: [0.2, 0.5, 0.2],
+                x: [(Math.random() - 0.5) * 500, (Math.random() - 0.5) * 500],
+                y: [(Math.random() - 0.5) * 500, (Math.random() - 0.5) * 500],
+                opacity: [0, 0.8, 0]
               }}
               transition={{
-                duration: 3 + i,
+                duration: 8 + Math.random() * 8,
                 repeat: Infinity,
-                delay: i * 0.5,
+                delay: i * 0.4
               }}
-              className="absolute w-1 md:w-1.5 h-1 md:h-1.5 bg-white rounded-full"
-              style={{
-                top: `${20 + i * 12}%`,
-                right: `${10 + (i % 3) * 15}%`,
-              }}
-            />
+              className="absolute w-1 h-1 bg-white flex items-center justify-center"
+            >
+              <div className="absolute w-4 h-[1px] bg-white/20 rotate-45" />
+            </motion.div>
           ))}
+
+          {/* Technical Readouts */}
+          <div className="absolute bottom-10 right-10 flex flex-col items-end gap-2 opacity-20 pointer-events-none hidden md:flex">
+            <span className="text-[8px] font-mono text-white tracking-[0.3em] uppercase">SYSTEM_STATE: STABLE</span>
+            <span className="text-[8px] font-mono text-white tracking-[0.3em] uppercase">BYTE_STREAM: ACTIVE</span>
+            <div className="w-24 h-1 bg-white/10">
+              <motion.div
+                animate={{ width: ["0%", "100%", "0%"] }}
+                transition={{ duration: 3, repeat: Infinity }}
+                className="h-full bg-white"
+              />
+            </div>
+          </div>
+
+          {/* Scanning Beam */}
+          <motion.div
+            animate={{ top: ["-10%", "110%"] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+            className="absolute left-0 right-0 h-[100px] bg-gradient-to-b from-transparent via-white/5 to-transparent pointer-events-none"
+          />
         </div>
       </div>
 
@@ -203,7 +248,7 @@ const Hero = () => {
       <motion.div
         animate={{ y: [0, 10, 0] }}
         transition={{ repeat: Infinity, duration: 2 }}
-        className="absolute bottom-10 left-6"
+        className="absolute bottom-10 left-6 z-30"
       >
         <div className="w-[1px] h-12 bg-gradient-to-b from-white to-transparent" />
       </motion.div>
@@ -296,10 +341,6 @@ const ProgressInfo = () => {
         </div>
       </div>
 
-      {/* Background large text for texture */}
-      <div className="absolute -bottom-10 -left-10 opacity-[0.03] pointer-events-none select-none">
-        <span className="text-[300px] font-black leading-none">GROWTH</span>
-      </div>
     </section>
   );
 };
@@ -426,9 +467,6 @@ const Features = () => {
 
 const CTA = () => (
   <section className="py-24 px-6 bg-black overflow-hidden relative transition-colors duration-500 border-t border-white/5">
-    <div className="absolute top-0 right-0 opacity-5">
-      <span className="text-[200px] font-black pointer-events-none text-white">IN<span className="text-white/40">CODEX</span></span>
-    </div>
     <div className="max-w-7xl mx-auto relative z-10 text-center flex flex-col items-center justify-center gap-12">
       <div className="max-w-4xl">
         <Reveal className="mx-auto">
@@ -558,18 +596,16 @@ const Testimonials = () => {
             Working with INCODEX was a great experience. They developed a modern, user-friendly website that exceeded our expectations. Their attention to detail and dedication to delivering high-quality work stood out. The positive feedback from our users has been overwhelming. We highly recommend their services.
           </motion.p>
           <div className="flex flex-col items-center">
-            <div className="w-24 h-24 mb-6 grayscale hover:grayscale-0 transition-all duration-500">
+            <div className="w-24 h-24 mb-6 relative bg-white/5 rounded-full overflow-hidden flex items-center justify-center">
+              <User size={40} className="text-white opacity-20 absolute" />
               <img
                 src="/chairman.png"
                 alt="Chairman"
-                className="w-full h-full object-contain"
-                onLoad={(e) => { e.target.style.opacity = 1; if (e.target.nextSibling) e.target.nextSibling.style.display = 'none'; }}
-                onError={(e) => { e.target.style.opacity = 0; if (e.target.nextSibling) e.target.nextSibling.style.display = 'flex'; }}
-                style={{ opacity: 0, transition: 'opacity 0.5s' }}
+                className="w-full h-full object-contain relative z-10 transition-opacity duration-500"
+                onLoad={(e) => { e.target.style.opacity = 1; }}
+                onError={(e) => { e.target.style.opacity = 0; }}
+                style={{ opacity: 0 }}
               />
-              <div className="hidden items-center justify-center bg-white/5 rounded-full w-full h-full">
-                <User size={40} className="text-white opacity-20" />
-              </div>
             </div>
             <span className="text-white font-black text-sm tracking-[0.4em] uppercase">Chairman</span>
             <span className="text-white/30 text-[10px] mt-2 tracking-[0.2em] uppercase max-w-xs cursor-default">Dept. of Criminology, University of Dhaka</span>
@@ -595,8 +631,16 @@ const Testimonials = () => {
                 {reveiw.content}
               </p>
               <div className="mt-auto flex items-center space-x-4">
-                <div className="w-10 h-10 rounded-none bg-neutral-900 overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-500">
-                  <img src={reveiw.image} alt="" className="w-full h-full object-cover" />
+                <div className="w-10 h-10 rounded-full bg-neutral-900 overflow-hidden relative flex items-center justify-center flex-shrink-0">
+                  <User size={20} className="text-white opacity-20 absolute" />
+                  <img
+                    src={reveiw.image}
+                    alt=""
+                    className="w-full h-full object-cover relative z-10 transition-opacity duration-500"
+                    onLoad={(e) => { e.target.style.opacity = 1; }}
+                    onError={(e) => { e.target.style.opacity = 0; }}
+                    style={{ opacity: 0 }}
+                  />
                 </div>
                 <div>
                   <p className="text-white font-black text-[10px] uppercase tracking-widest">{reveiw.author}</p>
@@ -631,7 +675,7 @@ const Blog = () => {
   ];
 
   return (
-    <section id="blog" className="py-32 px-6 bg-black border-t border-white/5">
+    <section id="blog" className="py-32 px-6 bg-black border-t border-white/5 relative overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-24">
           <Reveal className="mx-auto">
