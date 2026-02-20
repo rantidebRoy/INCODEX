@@ -115,24 +115,24 @@ const Hero = () => {
 
       <div className="max-w-7xl mx-auto w-full relative z-20 pt-12 pb-20 flex flex-col items-center justify-center min-h-[80vh]">
 
-        {/* Central Atomic Animation - Visual Signature */}
-        <div className="relative w-full h-[150px] flex items-center justify-center mb-6 pointer-events-none scale-75 md:scale-100">
+        {/* Central Atomic Animation - High Frequency */}
+        <div className="relative w-full h-[150px] flex items-center justify-center mb-6 pointer-events-none scale-75 md:scale-100 will-change-transform">
           {/* Nucleus */}
           <motion.div
             animate={{
               scale: [1, 1.4, 1],
               opacity: [0.8, 1, 0.8]
             }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-            className="w-2 h-2 bg-white rounded-full shadow-[0_0_25px_white] z-30"
+            transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
+            className="w-2 h-2 bg-white rounded-full shadow-[0_0_20px_white] z-30"
           />
-          <div className="absolute w-24 h-24 bg-white/5 blur-[40px] rounded-full z-10" />
+          <div className="absolute w-20 h-20 bg-white/5 blur-[35px] rounded-full z-10" />
 
-          {/* 4 Primary Orbits (Rutherford Model) */}
+          {/* 4 Primary Orbits - Speed Optimized */}
           {[0, 90, 45, 135].map((rotate, i) => (
             <div
               key={i}
-              className="absolute"
+              className="absolute will-change-transform"
               style={{
                 width: '120px',
                 height: '120px',
@@ -147,7 +147,7 @@ const Hero = () => {
               <motion.div
                 animate={{ rotate: [0, 360] }}
                 transition={{
-                  duration: 2 + i * 0.5,
+                  duration: 1 + i * 0.4,
                   repeat: Infinity,
                   ease: "linear"
                 }}
