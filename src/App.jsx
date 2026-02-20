@@ -19,7 +19,7 @@ const Navbar = () => {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="text-2xl font-black tracking-tighter text-white cursor-default group"
+          className="text-2xl font-black tracking-tight text-white cursor-default group"
         >
           IN<span className="text-white/40 group-hover:text-white transition-colors duration-500">CODEX</span>
         </motion.div>
@@ -70,8 +70,8 @@ const Navbar = () => {
   );
 };
 
-const Reveal = ({ children, delay = 0 }) => (
-  <div className="relative overflow-hidden w-fit mx-auto">
+const Reveal = ({ children, delay = 0, className = "" }) => (
+  <div className={`relative overflow-hidden w-fit ${className}`}>
     <motion.div
       initial={{ y: "100%" }}
       whileInView={{ y: 0 }}
@@ -106,21 +106,21 @@ const Hero = () => {
         />
       </div>
 
-      <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 items-center relative z-10">
-        <div className="text-center">
-          <Reveal>
-            <h1 className="text-4xl md:text-6xl font-black text-white mb-4 leading-[1.1] tracking-tight">
+      <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 items-center relative z-10 py-12 md:py-20">
+        <div className="text-center lg:text-left max-w-2xl mx-auto lg:mx-0">
+          <Reveal className="mx-auto lg:mx-0">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-2 leading-[1.2] tracking-tight uppercase">
               Beautiful things
             </h1>
           </Reveal>
-          <Reveal delay={0.1}>
-            <h1 className="text-4xl md:text-6xl font-black text-white mb-4 leading-[1.1] tracking-tight">
+          <Reveal delay={0.1} className="mx-auto lg:mx-0">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-2 leading-[1.2] tracking-tight uppercase">
               come together
             </h1>
           </Reveal>
-          <Reveal delay={0.2}>
-            <h1 className="text-4xl md:text-6xl font-black text-white mb-4 leading-[1.1] tracking-tight">
-              <span className="text-outline-white text-transparent">one byte</span> at a time.
+          <Reveal delay={0.2} className="mx-auto lg:mx-0">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-6 leading-[1.2] tracking-tight uppercase whitespace-nowrap">
+              one <span className="text-white/40">byte</span> at a time.
             </h1>
           </Reveal>
 
@@ -128,7 +128,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-lg md:text-xl text-white/50 mt-8 mb-12 max-w-xl mx-auto leading-relaxed font-light"
+            className="text-base md:text-lg lg:text-xl text-white/50 mb-10 leading-relaxed font-light px-4 md:px-0"
           >
             You have no idea how <span className="text-white font-bold">RAPIDLY YOU CAN GROW.</span> <br className="hidden md:block" />
             Let’s find out together.
@@ -138,42 +138,42 @@ const Hero = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.8 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+            className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4"
           >
-            <button className="bg-white text-black px-12 py-6 rounded-full font-black text-lg flex items-center group hover:bg-neutral-200 transition-all duration-300 shadow-2xl relative">
-              <span className="relative z-10">START PROJECT</span>
+            <button className="bg-white text-black px-10 py-5 rounded-full font-black text-base flex items-center group hover:bg-neutral-200 transition-all duration-300 shadow-2xl relative">
+              <span className="relative z-10 uppercase tracking-[0.2em]">START PROJECT</span>
               <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform relative z-10" />
             </button>
           </motion.div>
         </div>
 
-        {/* Right side animation */}
-        <div className="hidden lg:block relative h-[500px]">
+        {/* Right side animation - now responsive */}
+        <div className="relative h-[300px] md:h-[500px] lg:h-[600px] w-full flex items-center justify-center">
           <motion.div
             animate={{
               rotate: 360,
-              scale: [1, 1.1, 1],
+              scale: [1, 1.05, 1],
             }}
             transition={{
               duration: 20,
               repeat: Infinity,
               ease: "linear"
             }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] border border-white/10 rounded-full"
+            className="absolute w-[280px] h-[280px] md:w-[400px] md:h-[400px] border border-white/10 rounded-full"
           />
           <motion.div
             animate={{
               rotate: -360,
-              scale: [1, 1.2, 1],
+              scale: [1, 1.1, 1],
             }}
             transition={{
               duration: 15,
               repeat: Infinity,
               ease: "linear"
             }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] border border-white/20 rounded-[40%] flex items-center justify-center"
+            className="absolute w-[200px] h-[200px] md:w-[300px] md:h-[300px] border border-white/20 rounded-[40%] flex items-center justify-center"
           >
-            <div className="w-4 h-4 bg-white rounded-full shadow-[0_0_20px_white]" />
+            <div className="w-3 h-3 md:w-4 md:h-4 bg-white rounded-full shadow-[0_0_20px_white]" />
           </motion.div>
 
           {/* Floating bytes/dots */}
@@ -189,10 +189,10 @@ const Hero = () => {
                 repeat: Infinity,
                 delay: i * 0.5,
               }}
-              className="absolute w-1.5 h-1.5 bg-white rounded-full"
+              className="absolute w-1 md:w-1.5 h-1 md:h-1.5 bg-white rounded-full"
               style={{
                 top: `${20 + i * 12}%`,
-                right: `${15 + (i % 3) * 10}%`,
+                right: `${10 + (i % 3) * 15}%`,
               }}
             />
           ))}
@@ -215,9 +215,9 @@ const ProgressInfo = () => {
   return (
     <section className="py-32 px-6 bg-black text-white transition-colors duration-500 overflow-hidden relative">
       <div className="max-w-7xl mx-auto relative z-10 text-center">
-        <Reveal>
-          <h2 className="text-3xl md:text-6xl font-black mb-10 tracking-tighter leading-[1] max-w-5xl mx-auto uppercase">
-            BUSINESSES GROWING WITH <span className="text-outline-white text-transparent" style={{ WebkitTextStroke: '1.5px white' }}>INCODEX</span>
+        <Reveal className="mx-auto">
+          <h2 className="text-3xl md:text-6xl font-black mb-10 tracking-tight leading-[1] max-w-5xl mx-auto uppercase">
+            BUSINESSES GROWING WITH IN<span className="text-white/40">CODEX</span>
           </h2>
         </Reveal>
 
@@ -253,7 +253,7 @@ const ProgressInfo = () => {
           >
             <div className="absolute top-0 left-0 w-1 h-0 bg-white group-hover:h-full transition-all duration-700" />
             <div className="absolute top-0 right-0 w-1 h-0 bg-white/20 group-hover:h-full transition-all duration-700 delay-100" />
-            <h3 className="text-3xl font-black mb-2 tracking-tighter uppercase">FIFTY SHADES OF WEBSITE</h3>
+            <h3 className="text-3xl font-black mb-2 tracking-tight uppercase">FIFTY SHADES OF WEBSITE</h3>
             <p className="text-2xl font-light text-white/30 mb-10 tracking-tight">$157 – $900</p>
             <ul className="space-y-5 mb-12 flex-grow">
               {['E-commerce', 'Portfolio', 'Personal Blogs', 'News Portal', 'Organisations', 'Travel Agency', 'Fundraising'].map((item) => (
@@ -279,7 +279,7 @@ const ProgressInfo = () => {
           >
             <div className="absolute top-0 left-0 w-1 h-0 bg-white group-hover:h-full transition-all duration-700" />
             <div className="absolute top-0 right-0 w-1 h-0 bg-white/20 group-hover:h-full transition-all duration-700 delay-100" />
-            <h3 className="text-3xl font-black mb-2 tracking-tighter uppercase">INNOVATIVE GRAPHICS & SEO</h3>
+            <h3 className="text-3xl font-black mb-2 tracking-tight uppercase">INNOVATIVE GRAPHICS & SEO</h3>
             <p className="text-2xl font-light text-white/30 mb-10 tracking-tight">$17 – $500</p>
             <ul className="space-y-5 mb-12 flex-grow">
               {['Logo Design', 'Banner Design', 'Vector Illustrations', 'UI/UX Design', 'On-Page SEO', 'Off-Page SEO'].map((item) => (
@@ -313,8 +313,8 @@ const ServicesInfo = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <Reveal>
-            <h2 className="text-3xl md:text-5xl font-black mb-8 tracking-tighter uppercase leading-[1.1]">
+          <Reveal className="mx-auto">
+            <h2 className="text-3xl md:text-5xl font-black mb-8 tracking-tight uppercase leading-[1.1]">
               TOP-NOTCH SERVICES <br /> FOR YOUR BUSINESS
             </h2>
           </Reveal>
@@ -372,11 +372,6 @@ const Features = () => {
       icon: ShoppingCart,
       title: "E-COMMERCE SOLUTION",
       description: "Building scalable online stores that convert. From seamless checkout experiences to inventory management, we create shops that drive revenue."
-    },
-    {
-      icon: Shield,
-      title: "SECURE ARCHITECTURE",
-      description: "Protecting your digital assets with enterprise-grade security. We implement robust encryption and secure protocols to keep your data safe."
     }
   ];
 
@@ -384,8 +379,8 @@ const Features = () => {
     <section id="quote" className="py-32 px-6 bg-black border-t border-white/5 relative overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-24">
-          <Reveal>
-            <h2 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-tighter uppercase">OUR EXPERTISE</h2>
+          <Reveal className="mx-auto">
+            <h2 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-tight uppercase">OUR EXPERTISE</h2>
           </Reveal>
           <motion.div
             initial={{ width: 0 }}
@@ -395,7 +390,7 @@ const Features = () => {
           />
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="flex flex-wrap justify-center gap-6">
           {features.map((f, i) => (
             <motion.div
               key={i}
@@ -404,7 +399,7 @@ const Features = () => {
               viewport={{ once: true }}
               transition={{ delay: i * 0.1, duration: 0.6 }}
               whileHover={{ y: -10 }}
-              className="group p-10 border border-white/10 hover:border-white transition-all duration-500 bg-neutral-950 flex flex-col h-full relative"
+              className="group p-10 border border-white/10 hover:border-white transition-all duration-500 bg-neutral-950 flex flex-col relative w-full md:w-[45%] lg:w-[30%] min-h-[400px] flex-grow-0 flex-shrink-0"
             >
               {/* Corner decor */}
               <div className="absolute top-0 right-0 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -415,7 +410,7 @@ const Features = () => {
               <div className="w-12 h-12 text-white mb-8 group-hover:scale-110 transition-transform duration-500">
                 <f.icon size={40} strokeWidth={1.5} />
               </div>
-              <h3 className="text-xl font-black text-white mb-6 leading-tight tracking-wider uppercase">
+              <h3 className="text-xl font-black text-white mb-6 leading-tight tracking-widest uppercase">
                 {f.title}
               </h3>
               <p className="text-white/40 leading-relaxed font-light group-hover:text-white/70 transition-colors flex-grow">
@@ -432,15 +427,15 @@ const Features = () => {
 const CTA = () => (
   <section className="py-24 px-6 bg-black overflow-hidden relative transition-colors duration-500 border-t border-white/5">
     <div className="absolute top-0 right-0 opacity-5">
-      <span className="text-[200px] font-black pointer-events-none text-white">INCODEX</span>
+      <span className="text-[200px] font-black pointer-events-none text-white">IN<span className="text-white/40">CODEX</span></span>
     </div>
-    <div className="max-w-7xl mx-auto relative z-10 text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-12">
-      <div>
-        <Reveal>
-          <h2 className="text-4xl md:text-6xl font-black text-white mb-8 leading-[1.1] tracking-tighter uppercase">
+    <div className="max-w-7xl mx-auto relative z-10 text-center flex flex-col items-center justify-center gap-12">
+      <div className="max-w-4xl">
+        <Reveal className="mx-auto">
+          <h2 className="text-4xl md:text-6xl font-black text-white mb-8 leading-[1.1] tracking-tight uppercase">
             BEAUTIFUL THINGS <br />
             COME TOGETHER <br />
-            ONE BYTE AT A TIME.
+            ONE <span className="text-white/40">BYTE</span> AT A TIME.
           </h2>
         </Reveal>
         <p className="text-xl text-white/60 max-w-xl">
@@ -459,7 +454,7 @@ const Footer = () => (
     <div className="max-w-7xl mx-auto">
       <div className="grid md:grid-cols-4 gap-12 mb-16">
         <div className="col-span-2">
-          <div className="text-3xl font-black mb-6">INCODEX</div>
+          <div className="text-3xl font-black mb-6">IN<span className="text-white/40">CODEX</span></div>
           <p className="text-white/50 max-w-sm mb-8">
             Superior software engineering firm specializing in complex system architectures and intelligent product development.
           </p>
@@ -532,8 +527,8 @@ const Testimonials = () => {
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="text-center mb-24">
-          <Reveal>
-            <h2 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-tighter uppercase">CLIENT VOICES</h2>
+          <Reveal className="mx-auto">
+            <h2 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-tight uppercase">CLIENT VOICES</h2>
           </Reveal>
           <motion.div
             initial={{ width: 0 }}
@@ -548,8 +543,8 @@ const Testimonials = () => {
           <div className="flex justify-center mb-10">
             <Quote size={40} className="text-white opacity-20" />
           </div>
-          <Reveal>
-            <h3 className="text-2xl md:text-4xl font-black text-white mb-10 tracking-tighter uppercase leading-[1.1]">
+          <Reveal className="mx-auto">
+            <h3 className="text-2xl md:text-4xl font-black text-white mb-10 tracking-tight uppercase leading-[1.1]">
               "We feel confident to use their skills <br /> to boost our presence online!"
             </h3>
           </Reveal>
@@ -576,7 +571,7 @@ const Testimonials = () => {
                 <User size={40} className="text-white opacity-20" />
               </div>
             </div>
-            <span className="text-white font-black text-sm tracking-[0.3em] uppercase">Chairman</span>
+            <span className="text-white font-black text-sm tracking-[0.4em] uppercase">Chairman</span>
             <span className="text-white/30 text-[10px] mt-2 tracking-[0.2em] uppercase max-w-xs cursor-default">Dept. of Criminology, University of Dhaka</span>
           </div>
         </div>
@@ -639,8 +634,8 @@ const Blog = () => {
     <section id="blog" className="py-32 px-6 bg-black border-t border-white/5">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-24">
-          <Reveal>
-            <h2 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-tighter uppercase">THE JOURNAL</h2>
+          <Reveal className="mx-auto">
+            <h2 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-tight uppercase">THE JOURNAL</h2>
           </Reveal>
           <motion.div
             initial={{ width: 0 }}
