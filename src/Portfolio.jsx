@@ -52,7 +52,7 @@ const Portfolio = ({ Reveal }) => {
                         <span className="text-white/30 text-xs font-bold tracking-[0.5em] uppercase mb-4 block">Proven Excellence</span>
                     </Reveal>
                     <Reveal delay={0.1} className="mx-auto">
-                        <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight uppercase">Our Projects</h2>
+                        <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight uppercase">Portfolio</h2>
                     </Reveal>
                 </div>
 

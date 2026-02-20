@@ -1,11 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ArrowRight, Search, Shield, Zap, Globe, Layout, ChevronRight, Github, Twitter, Linkedin, Sun, Moon, Link as LinkIcon, ShoppingCart, Quote, User } from 'lucide-react';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  NavLink,
+  useNavigate,
+  useLocation
+} from 'react-router-dom';
+import {
+  Menu, X, ArrowRight, Search, Shield, Zap,
+  Globe, Layout, ChevronRight, Github, Twitter,
+  Linkedin, Sun, Moon, Link as LinkIcon,
+  ShoppingCart, Quote, User
+} from 'lucide-react';
 import Portfolio from './Portfolio';
 
-const Navbar = ({ setView, currentView }) => {
+const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
+  const searchInputRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -13,49 +31,133 @@ const Navbar = ({ setView, currentView }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navItems = ['Home', 'Portfolio', 'Quote', 'Blog', 'About', 'Contact'];
-
-  const handleNavClick = (item) => {
-    if (item === 'Portfolio') {
-      setView('portfolio');
-    } else if (item === 'Home') {
-      setView('home');
+  useEffect(() => {
+    if (isSearchOpen && searchInputRef.current) {
+      searchInputRef.current.focus();
     }
-    setIsMobileMenuOpen(false);
-  };
+  }, [isSearchOpen]);
+
+  const navItems = [
+    { name: 'Home', path: '/' },
+    { name: 'Portfolio', path: '/portfolio' },
+    { name: 'Quote', path: '#quote' },
+    { name: 'Blog', path: '#blog' },
+    { name: 'About', path: '#footer' },
+    { name: 'Contact', path: '#footer' }
+  ];
+
+  const searchResults = [
+    { title: "Custom Software", category: "Service" },
+    { title: "Mobile Apps", category: "Development" },
+    { title: "Ajker Bangla", category: "Project" },
+    { title: "Nanotechnology", category: "Research" }
+  ].filter(item =>
+    searchTerm && item.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <nav className={`fixed w-full z-50 transition-all duration-500 ${isScrolled ? 'bg-black/90 backdrop-blur-md py-4 border-b border-white/10' : 'bg-transparent py-8'}`}>
-      <div className="max-w-7xl mx-auto px-6 flex items-center justify-center relative">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="absolute left-6 cursor-pointer"
-          onClick={() => setView('home')}
+      <div className="max-w-7xl mx-auto px-6 flex items-center justify-between relative h-10">
+
+        {/* Logo */}
+        <Link
+          to="/"
+          className="z-50 shrink-0"
+          onClick={() => {
+            setIsMobileMenuOpen(false);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
         >
-          <img src="/inc-02.png" alt="INCODEX" className="h-6 md:h-7 w-auto object-contain" />
-        </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <img src="/inc-02.png" alt="INCODEX" className="h-6 md:h-7 w-auto object-contain" />
+          </motion.div>
+        </Link>
 
         {/* Desktop Menu - Centered */}
-        <div className="hidden md:flex items-center space-x-10">
+        <div className="hidden lg:flex items-center space-x-8 absolute left-1/2 -translate-x-1/2">
           {navItems.map((item) => (
-            <button
-              key={item}
-              onClick={() => handleNavClick(item)}
-              className={`text-[10px] font-bold transition-all tracking-[0.3em] uppercase ${(item === 'Home' && currentView === 'home') || (item === 'Portfolio' && currentView === 'portfolio')
-                ? 'text-white'
-                : 'text-white/50 hover:text-white'
-                }`}
+            <NavLink
+              key={item.name}
+              to={item.path}
+              className={({ isActive }) =>
+                `text-[9px] font-bold transition-all tracking-[0.3em] uppercase ${isActive && item.path !== '#quote' && item.path !== '#blog' && item.path !== '#footer'
+                  ? 'text-white'
+                  : 'text-white/40 hover:text-white'
+                }`
+              }
             >
-              {item}
-            </button>
+              {item.name}
+            </NavLink>
           ))}
         </div>
 
-        <div className="absolute right-6 flex items-center space-x-4">
+        {/* Right Actions: Search + Mobile Menu */}
+        <div className="flex items-center space-x-2 md:space-x-4 z-50">
+          {/* Desktop Search */}
+          <div className="hidden md:flex items-center relative">
+            <AnimatePresence>
+              {isSearchOpen && (
+                <motion.div
+                  initial={{ width: 0, opacity: 0 }}
+                  animate={{ width: 240, opacity: 1 }}
+                  exit={{ width: 0, opacity: 0 }}
+                  className="overflow-hidden mr-2"
+                >
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search..."
+                    className="w-full bg-white/5 border border-white/10 rounded-full py-2 px-4 text-xs text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all"
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+            <button
+              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              className="p-2 text-white/40 hover:text-white transition-colors"
+            >
+              {isSearchOpen ? <X size={18} /> : <Search size={18} />}
+            </button>
+
+            {/* Results Dropdown */}
+            <AnimatePresence>
+              {isSearchOpen && searchTerm && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  className="absolute top-full right-0 mt-4 w-64 bg-neutral-900 border border-white/10 rounded-xl overflow-hidden backdrop-blur-2xl shadow-2xl"
+                >
+                  {searchResults.length > 0 ? (
+                    <div className="p-1">
+                      {searchResults.map((result, idx) => (
+                        <button
+                          key={idx}
+                          className="w-full flex items-center justify-between p-3 hover:bg-white/5 rounded-lg transition-colors text-left group"
+                        >
+                          <span className="text-white text-[10px] font-bold uppercase tracking-tight">{result.title}</span>
+                          <span className="text-[8px] text-white/20 font-black tracking-widest uppercase">{result.category}</span>
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-6 text-center text-white/20 text-[8px] font-bold uppercase tracking-widest">
+                      No results found
+                    </div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
           <button
-            className="md:hidden p-2 text-white"
+            className="lg:hidden p-2 text-white/40 hover:text-white transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -70,17 +172,30 @@ const Navbar = ({ setView, currentView }) => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-black border-b border-white/10 overflow-hidden"
+            className="lg:hidden bg-black border-b border-white/10 overflow-hidden"
           >
-            <div className="px-6 py-8 flex flex-col space-y-6 text-center">
+            <div className="px-6 py-10 flex flex-col space-y-8 text-center items-center">
+              {/* Mobile Search */}
+              <div className="w-full max-w-xs relative mb-4">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" size={16} />
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search..."
+                  className="w-full bg-white/5 border border-white/10 rounded-full py-3 pl-12 pr-4 text-sm text-white focus:outline-none"
+                />
+              </div>
+
               {navItems.map((item) => (
-                <button
-                  key={item}
-                  onClick={() => handleNavClick(item)}
-                  className="text-xl font-bold text-white uppercase tracking-widest"
+                <NavLink
+                  key={item.name}
+                  to={item.path}
+                  className="text-lg font-bold text-white uppercase tracking-[0.2em]"
+                  onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  {item}
-                </button>
+                  {item.name}
+                </NavLink>
               ))}
             </div>
           </motion.div>
@@ -215,31 +330,12 @@ const Hero = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.8 }}
-            className="flex flex-col items-center justify-center gap-10"
+            className="flex flex-col sm:flex-row items-center justify-center gap-6"
           >
-            {/* Search Bar */}
-            <div className="w-full max-w-xl relative group">
-              <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none text-white/20 group-focus-within:text-white transition-colors duration-300">
-                <Search size={20} />
-              </div>
-              <input
-                type="text"
-                placeholder="Search services, technologies, projects..."
-                className="w-full bg-white/[0.03] border border-white/10 rounded-full py-6 pl-16 pr-8 text-white placeholder:text-white/20 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 backdrop-blur-xl"
-              />
-              <div className="absolute inset-y-2 right-2 flex items-center">
-                <button className="bg-white/10 hover:bg-white hover:text-black text-white px-6 h-full rounded-full font-bold text-xs uppercase tracking-widest transition-all duration-300">
-                  Search
-                </button>
-              </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-              <button className="bg-white text-black px-12 py-6 rounded-full font-black text-lg flex items-center group hover:bg-neutral-200 transition-all duration-300 shadow-2xl relative overflow-hidden">
-                <span className="relative z-10 uppercase tracking-[0.2em]">START PROJECT</span>
-                <ArrowRight className="ml-3 group-hover:translate-x-2 transition-transform relative z-10" />
-              </button>
-            </div>
+            <button className="bg-white text-black px-12 py-6 rounded-full font-black text-lg flex items-center group hover:bg-neutral-200 transition-all duration-300 shadow-2xl relative overflow-hidden">
+              <span className="relative z-10 uppercase tracking-[0.2em]">START PROJECT</span>
+              <ArrowRight className="ml-3 group-hover:translate-x-2 transition-transform relative z-10" />
+            </button>
           </motion.div>
         </div>
       </div>
@@ -370,24 +466,6 @@ const ServicesInfo = () => {
   );
 };
 
-const FeatureCard = ({ icon: Icon, title, description }) => (
-  <motion.div
-    whileHover={{ y: -10 }}
-    className="p-8 rounded-3xl bg-neutral-900 border border-white/5 hover:border-white/20 transition-all group"
-  >
-    <div className="w-14 h-14 bg-white text-black rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-white/5 group-hover:rotate-6 transition-transform">
-      <Icon size={28} />
-    </div>
-    <h3 className="text-2xl font-bold text-white mb-4">{title}</h3>
-    <p className="text-white/50 leading-relaxed mb-6">
-      {description}
-    </p>
-    <a href="#" className="inline-flex items-center text-sm font-bold text-white group-hover:underline">
-      Learn more <ChevronRight size={16} className="ml-1" />
-    </a>
-  </motion.div>
-);
-
 const Features = () => {
   const features = [
     {
@@ -489,7 +567,7 @@ const CTA = () => (
 );
 
 const Footer = () => (
-  <footer className="bg-black text-white py-16 px-6 border-t border-white/10 transition-colors duration-500">
+  <footer id="footer" className="bg-black text-white py-16 px-6 border-t border-white/10 transition-colors duration-500">
     <div className="max-w-7xl mx-auto">
       <div className="grid md:grid-cols-4 gap-12 mb-16">
         <div className="col-span-2">
@@ -533,8 +611,6 @@ const Footer = () => (
     </div>
   </footer>
 );
-
-// Portfolio component has been moved to Portfolio.jsx
 
 const Testimonials = () => {
   const reviews = [
@@ -723,36 +799,55 @@ const Blog = () => {
   );
 };
 
-const App = () => {
-  const [view, setView] = useState(() => localStorage.getItem('site_view') || 'home');
+const AppContents = () => {
+  const location = useLocation();
 
   useEffect(() => {
-    document.documentElement.classList.add('dark');
-    localStorage.setItem('site_view', view);
-  }, [view]);
+    if (location.hash) {
+      const element = document.getElementById(location.hash.substring(1));
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [location.pathname, location.hash]);
 
   return (
-    <div className="dark">
-      <div className="bg-black min-h-screen font-sans selection:bg-white selection:text-black transition-colors duration-500">
-        <Navbar setView={setView} currentView={view} />
+    <div className="bg-black min-h-screen font-sans selection:bg-white selection:text-black transition-colors duration-500">
+      <Navbar />
 
-        {view === 'home' ? (
+      <Routes>
+        <Route path="/" element={
           <>
             <Hero />
+            <ProgressInfo />
             <Features />
             <ServicesInfo />
-            {/* Portfolio is now a separate view */}
             <Testimonials />
             <Blog />
             <CTA />
           </>
-        ) : (
-          <Portfolio Reveal={Reveal} />
-        )}
+        } />
+        <Route path="/portfolio" element={<Portfolio Reveal={Reveal} />} />
+      </Routes>
 
-        <Footer />
-      </div>
+      <Footer />
     </div>
+  );
+};
+
+const App = () => {
+  useEffect(() => {
+    document.documentElement.classList.add('dark');
+  }, []);
+
+  return (
+    <Router>
+      <div className="dark">
+        <AppContents />
+      </div>
+    </Router>
   );
 };
 
