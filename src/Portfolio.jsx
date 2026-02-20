@@ -18,7 +18,7 @@ const Portfolio = ({ Reveal }) => {
             description: "A comprehensive digital news portal delivering real-time updates on politics, economy, and culture across Bangladesh.",
             url: "https://ajkerbangla.news",
             category: "Media & News",
-            image: "https://ajkerbangla.news/wp-content/uploads/2025/09/logo_AB.png"
+            image: "/AjkerBangla.png" // Example of another local image
         },
         {
             title: "MCRL - DU",
@@ -26,7 +26,7 @@ const Portfolio = ({ Reveal }) => {
             description: "An extraordinary research facility at the University of Dhaka focusing on material science innovations and chemical engineering.",
             url: "https://mcrl.du.ac.bd",
             category: "Research",
-            image: "https://mcrl.du.ac.bd/wp-content/uploads/2025/11/IMG-20251028-WA0000.jpg"
+            image: "/MaterialChemistry.png" // Using local image from public folder
         },
         {
             title: "DUNC - Nanotech Center",
@@ -34,7 +34,7 @@ const Portfolio = ({ Reveal }) => {
             description: "Leading the frontier of nanoscale engineering and material physics. Architects of tomorrow's technological foundations.",
             url: "https://dunc.incodexbd.com",
             category: "Engineering",
-            image: "https://dunc.incodexbd.com/wp-content/uploads/2026/02/dunc_logo-04-2048x639.png"
+            image: "/Nano.png"
         },
         {
             title: "Criminology - DU",
@@ -42,7 +42,7 @@ const Portfolio = ({ Reveal }) => {
             description: "Official academic portal for the Department of Criminology at University of Dhaka, showcasing research, faculty, and programs.",
             url: "https://criminology.du.ac.bd",
             category: "Academic",
-            image: "https://criminology.du.ac.bd/images/du_logo.png"
+            image: "/Criminology.png"
         }
     ];
 
