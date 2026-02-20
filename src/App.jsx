@@ -213,7 +213,7 @@ const Hero = () => {
               <motion.div
                 animate={{ rotate: [0, 360] }}
                 transition={{
-                  duration: 1 + i * 0.4,
+                  duration: (1 + i * 0.4) * 2,
                   repeat: Infinity,
                   ease: "linear"
                 }}
@@ -514,49 +514,80 @@ const CTA = () => (
 );
 
 const Footer = () => (
-  <footer id="footer" className="bg-black text-white py-16 px-6 border-t border-white/10 transition-colors duration-500">
-    <div className="max-w-7xl mx-auto">
-      <div className="grid md:grid-cols-4 gap-12 mb-16">
-        <div className="col-span-2">
-          <div className="mb-6">
-            <img src="/inc-04.png" alt="INCODEX" className="h-8 w-auto" />
+  <footer id="footer" className="bg-black text-white py-24 px-6 border-t border-white/10 transition-colors duration-500 relative overflow-hidden">
+    <div className="max-w-7xl mx-auto relative z-10">
+      <div className="grid md:grid-cols-2 lg:grid-cols-12 gap-12 mb-16 items-start">
+        {/* Left Section: Branding */}
+        <div className="lg:col-span-5">
+          <div className="mb-8">
+            <img src="/inc-02.png" alt="INCODEX" className="h-8 md:h-10 w-auto opacity-80" />
           </div>
-          <p className="text-white/50 max-w-sm mb-8">
-            Superior software engineering firm specializing in complex system architectures and intelligent product development.
+          <p className="text-white/50 max-w-md mb-10 text-base md:text-lg leading-relaxed font-light">
+            Superior software engineering firm specializing in complex system architectures and intelligent product development. We bridge the gap between imagination and digital reality.
           </p>
-          <div className="flex space-x-4">
-            <button className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black transition-all">
-              <Twitter size={18} />
-            </button>
-            <button className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black transition-all">
-              <Linkedin size={18} />
-            </button>
-            <button className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black transition-all">
-              <Github size={18} />
-            </button>
+          <div className="flex space-x-6">
+            {[Twitter, Linkedin, Github].map((Icon, i) => (
+              <button key={i} className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-white hover:text-black hover:border-white transition-all duration-500 group">
+                <Icon size={20} className="group-hover:scale-110 transition-transform" />
+              </button>
+            ))}
           </div>
         </div>
-        <div>
-          <h4 className="font-bold mb-6 uppercase tracking-widest text-sm">Company</h4>
-          <ul className="space-y-4 text-white/50">
-            <li><a href="#" className="hover:underline">About Us</a></li>
-            <li><a href="#" className="hover:underline">Careers</a></li>
-            <li><a href="#" className="hover:underline">Press</a></li>
-            <li><a href="#" className="hover:underline">Privacy</a></li>
+
+        {/* Middle Section: Links */}
+        <div className="lg:col-span-2">
+          <h4 className="font-black mb-8 uppercase tracking-[0.3em] text-[10px] text-white/30">Company</h4>
+          <ul className="space-y-4 text-sm font-bold tracking-widest uppercase">
+            {['About Us', 'Careers', 'Press', 'Privacy'].map((item) => (
+              <li key={item}><a href="#" className="text-white/40 hover:text-white transition-colors">{item}</a></li>
+            ))}
           </ul>
         </div>
-        <div>
-          <h4 className="font-bold mb-6 uppercase tracking-widest text-sm">Legal</h4>
-          <ul className="space-y-4 text-white/50">
-            <li><a href="#" className="hover:underline">Terms</a></li>
-            <li><a href="#" className="hover:underline">Security</a></li>
-            <li><a href="#" className="hover:underline">Cookies</a></li>
+
+        <div className="lg:col-span-2">
+          <h4 className="font-black mb-8 uppercase tracking-[0.3em] text-[10px] text-white/30">Legal</h4>
+          <ul className="space-y-4 text-sm font-bold tracking-widest uppercase">
+            {['Terms', 'Security', 'Cookies', 'Support'].map((item) => (
+              <li key={item}><a href="#" className="text-white/40 hover:text-white transition-colors">{item}</a></li>
+            ))}
           </ul>
         </div>
+
+        {/* Right Section: 3D Asset Illustration */}
+        <div className="hidden lg:flex lg:col-span-3 items-center justify-center pt-8">
+          <motion.div
+            animate={{
+              y: [0, -50, 0],
+              rotateY: [0, 15, 0]
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+            className="relative w-full max-w-[200px]"
+          >
+            <img
+              src="/inc-04.png"
+              alt="INCODEX 3D Asset"
+              className="w-full h-auto object-contain drop-shadow-[0_20px_50px_rgba(255,255,255,0.15)] grayscale opacity-60 hover:opacity-100 hover:grayscale-0 transition-all duration-700"
+            />
+          </motion.div>
+        </div>
       </div>
-      <div className="pt-8 border-t border-white/5 text-center text-white/30 text-sm">
-        © {new Date().getFullYear()} INCODEX Systems Corp. All rights reserved. Built for the modern web.
+
+      <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-white/20 text-xs font-bold tracking-widest uppercase">
+        <div>© {new Date().getFullYear()} INCODEX Systems Corp.</div>
+        <div className="flex space-x-8">
+          <span>Global Access</span>
+          <span>Architects of Alpha</span>
+        </div>
       </div>
+    </div>
+
+    {/* Subtle Decorative Background Element */}
+    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none opacity-[0.02] z-0">
+      <div className="w-full h-full bg-[radial-gradient(circle_at_center,white_0%,transparent_70%)] blur-[100px]" />
     </div>
   </footer>
 );
