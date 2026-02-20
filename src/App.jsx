@@ -84,7 +84,7 @@ const Navbar = () => {
               key={item.name}
               to={item.path}
               className={({ isActive }) =>
-                `text-[9px] font-bold transition-all tracking-[0.3em] uppercase ${isActive && item.path !== '#quote' && item.path !== '#blog' && item.path !== '#footer'
+                `text-[13px] font-black transition-all tracking-[0.1em] uppercase inline-block scale-x-[0.85] scale-y-[1.25] ${isActive && item.path !== '#quote' && item.path !== '#blog' && item.path !== '#footer'
                   ? 'text-white'
                   : 'text-white/40 hover:text-white'
                 }`
@@ -220,7 +220,7 @@ const Reveal = ({ children, delay = 0, className = "" }) => (
 
 const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center pt-20 px-6 overflow-hidden bg-black">
+    <section className="relative min-h-screen flex items-center pt-32 px-6 overflow-hidden bg-black">
       {/* Background large text for texture */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden z-0">
         <img
@@ -230,87 +230,38 @@ const Hero = () => {
         />
       </div>
 
-      {/* Background decoration with floating animation */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-10">
+
+      <div className="max-w-7xl mx-auto w-full relative z-20 pt-2 pb-20 flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-16">
+
+        {/* Left Side: Hero Image */}
         <motion.div
-          animate={{
-            x: [0, 50, 0],
-            y: [0, 30, 0],
-          }}
-          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-          className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-white/[0.03] blur-[120px] rounded-full"
-        />
-        <motion.div
-          animate={{
-            x: [0, -30, 0],
-            y: [0, 50, 0],
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-white/[0.03] blur-[120px] rounded-full"
-        />
-      </div>
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          className="relative w-full lg:w-auto flex items-center justify-center lg:justify-end lg:-mt-24"
+        >
+          <div className="relative w-full max-w-[60px] md:max-w-[100px] lg:max-w-[140px]">
+            <img
+              src="/inc-04.png"
+              alt="INCODEX Asset"
+              className="w-full h-auto object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.1)]"
+            />
+          </div>
+        </motion.div>
 
-      <div className="max-w-7xl mx-auto w-full relative z-20 pt-12 pb-20 flex flex-col items-center justify-center min-h-[80vh]">
-
-        {/* Central Atomic Animation - High Frequency */}
-        <div className="relative w-full h-[150px] flex items-center justify-center mb-6 pointer-events-none scale-75 md:scale-100 will-change-transform">
-          {/* Nucleus */}
-          <motion.div
-            animate={{
-              scale: [1, 1.4, 1],
-              opacity: [0.8, 1, 0.8]
-            }}
-            transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
-            className="w-2 h-2 bg-white rounded-full shadow-[0_0_20px_white] z-30"
-          />
-          <div className="absolute w-20 h-20 bg-white/5 blur-[35px] rounded-full z-10" />
-
-          {/* 4 Primary Orbits - Speed Optimized */}
-          {[0, 90, 45, 135].map((rotate, i) => (
-            <div
-              key={i}
-              className="absolute will-change-transform"
-              style={{
-                width: '120px',
-                height: '120px',
-                transform: `rotateZ(${rotate}deg) rotateX(65deg)`,
-                transformStyle: 'preserve-3d'
-              }}
-            >
-              <div
-                className="absolute inset-0 border border-white/10 rounded-full"
-                style={{ transform: 'translateZ(0)' }}
-              />
-              <motion.div
-                animate={{ rotate: [0, 360] }}
-                transition={{
-                  duration: 1 + i * 0.4,
-                  repeat: Infinity,
-                  ease: "linear"
-                }}
-                className="absolute inset-0"
-              >
-                <div
-                  className="absolute top-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-white rounded-full shadow-[0_0_10px_white]"
-                  style={{ transform: 'rotateX(-65deg)' }}
-                />
-              </motion.div>
-            </div>
-          ))}
-        </div>
-
-        <div className="text-center max-w-4xl mx-auto">
-          <Reveal className="mx-auto">
+        {/* Right Side: Header Text */}
+        <div className="w-full lg:w-1/2 text-center lg:text-left flex flex-col items-center lg:items-start">
+          <Reveal className="mx-auto lg:ml-0">
             <h1 className="text-4xl md:text-5xl lg:text-7xl font-black text-white mb-2 leading-[1.1] tracking-tight uppercase">
               Beautiful things
             </h1>
           </Reveal>
-          <Reveal delay={0.1} className="mx-auto">
+          <Reveal delay={0.1} className="mx-auto lg:ml-0">
             <h1 className="text-4xl md:text-5xl lg:text-7xl font-black text-white mb-2 leading-[1.1] tracking-tight uppercase">
               come together
             </h1>
           </Reveal>
-          <Reveal delay={0.2} className="mx-auto">
+          <Reveal delay={0.2} className="mx-auto lg:ml-0">
             <h1 className="text-3xl md:text-4xl lg:text-6xl font-black text-white mb-8 leading-[1.1] tracking-tight uppercase">
               ONE <span className="text-white/40">BYTE</span> at a time.
             </h1>
@@ -320,7 +271,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-base md:text-lg lg:text-xl text-white/50 mb-12 leading-relaxed font-light px-4 max-w-2xl mx-auto text-center"
+            className="text-base md:text-lg lg:text-xl text-white/50 mb-12 leading-relaxed font-light max-w-2xl lg:max-w-none"
           >
             You have no idea how <span className="text-white font-bold">RAPIDLY YOU CAN GROW.</span> <br className="hidden md:block" />
             Let’s find out together.
@@ -330,7 +281,7 @@ const Hero = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.8 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-6"
+            className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6"
           >
             <button className="bg-white text-black px-12 py-6 rounded-full font-black text-lg flex items-center group hover:bg-neutral-200 transition-all duration-300 shadow-2xl relative overflow-hidden">
               <span className="relative z-10 uppercase tracking-[0.2em]">START PROJECT</span>
