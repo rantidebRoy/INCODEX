@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ArrowRight, Shield, Zap, Globe, Layout, ChevronRight, Github, Twitter, Linkedin, Sun, Moon, Link as LinkIcon, ShoppingCart, Quote, User } from 'lucide-react';
+import { Menu, X, ArrowRight, Search, Shield, Zap, Globe, Layout, ChevronRight, Github, Twitter, Linkedin, Sun, Moon, Link as LinkIcon, ShoppingCart, Quote, User } from 'lucide-react';
+import Portfolio from './Portfolio';
 
-const Navbar = () => {
+const Navbar = ({ setView, currentView }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -12,32 +13,47 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const navItems = ['Home', 'Portfolio', 'Quote', 'Blog', 'About', 'Contact'];
+
+  const handleNavClick = (item) => {
+    if (item === 'Portfolio') {
+      setView('portfolio');
+    } else if (item === 'Home') {
+      setView('home');
+    }
+    setIsMobileMenuOpen(false);
+  };
+
   return (
     <nav className={`fixed w-full z-50 transition-all duration-500 ${isScrolled ? 'bg-black/90 backdrop-blur-md py-4 border-b border-white/10' : 'bg-transparent py-8'}`}>
-      <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+      <div className="max-w-7xl mx-auto px-6 flex items-center justify-center relative">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="text-2xl font-black tracking-tight text-white cursor-default group"
+          className="absolute left-6 cursor-pointer"
+          onClick={() => setView('home')}
         >
-          IN<span className="text-white/40 group-hover:text-white transition-colors duration-500">CODEX</span>
+          <img src="/inc-02.png" alt="INCODEX" className="h-6 md:h-7 w-auto object-contain" />
         </motion.div>
 
-        {/* Desktop Menu */}
+        {/* Desktop Menu - Centered */}
         <div className="hidden md:flex items-center space-x-10">
-          {['Home', 'Quote', 'Blog', 'About', 'Contact'].map((item) => (
-            <a
+          {navItems.map((item) => (
+            <button
               key={item}
-              href={`#${item.toLowerCase()}`}
-              className="text-sm font-bold text-white/50 hover:text-white transition-colors tracking-widest uppercase"
+              onClick={() => handleNavClick(item)}
+              className={`text-[10px] font-bold transition-all tracking-[0.3em] uppercase ${(item === 'Home' && currentView === 'home') || (item === 'Portfolio' && currentView === 'portfolio')
+                ? 'text-white'
+                : 'text-white/50 hover:text-white'
+                }`}
             >
               {item}
-            </a>
+            </button>
           ))}
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="absolute right-6 flex items-center space-x-4">
           <button
             className="md:hidden p-2 text-white"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -56,11 +72,15 @@ const Navbar = () => {
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden bg-black border-b border-white/10 overflow-hidden"
           >
-            <div className="px-6 py-8 flex flex-col space-y-6">
-              {['Home', 'Quote', 'Blog', 'About', 'Contact'].map((item) => (
-                <a key={item} href={`#${item.toLowerCase()}`} className="text-xl font-bold text-white uppercase tracking-widest" onClick={() => setIsMobileMenuOpen(false)}>
+            <div className="px-6 py-8 flex flex-col space-y-6 text-center">
+              {navItems.map((item) => (
+                <button
+                  key={item}
+                  onClick={() => handleNavClick(item)}
+                  className="text-xl font-bold text-white uppercase tracking-widest"
+                >
                   {item}
-                </a>
+                </button>
               ))}
             </div>
           </motion.div>
@@ -88,9 +108,11 @@ const Hero = () => {
     <section className="relative min-h-screen flex items-center pt-20 px-6 overflow-hidden bg-black">
       {/* Background large text for texture */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden z-0">
-        <span className="text-[80px] md:text-[150px] lg:text-[220px] font-black leading-none tracking-tighter text-white/[0.05]">
-          INCODEX
-        </span>
+        <img
+          src="/inc-02.png"
+          alt=""
+          className="w-[300px] md:w-[500px] lg:w-[700px] opacity-[0.03] select-none pointer-events-none filter grayscale brightness-200"
+        />
       </div>
 
       {/* Background decoration with floating animation */}
@@ -193,12 +215,31 @@ const Hero = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.8 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-6"
+            className="flex flex-col items-center justify-center gap-10"
           >
-            <button className="bg-white text-black px-12 py-6 rounded-full font-black text-lg flex items-center group hover:bg-neutral-200 transition-all duration-300 shadow-2xl relative overflow-hidden">
-              <span className="relative z-10 uppercase tracking-[0.2em]">START PROJECT</span>
-              <ArrowRight className="ml-3 group-hover:translate-x-2 transition-transform relative z-10" />
-            </button>
+            {/* Search Bar */}
+            <div className="w-full max-w-xl relative group">
+              <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none text-white/20 group-focus-within:text-white transition-colors duration-300">
+                <Search size={20} />
+              </div>
+              <input
+                type="text"
+                placeholder="Search services, technologies, projects..."
+                className="w-full bg-white/[0.03] border border-white/10 rounded-full py-6 pl-16 pr-8 text-white placeholder:text-white/20 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 backdrop-blur-xl"
+              />
+              <div className="absolute inset-y-2 right-2 flex items-center">
+                <button className="bg-white/10 hover:bg-white hover:text-black text-white px-6 h-full rounded-full font-bold text-xs uppercase tracking-widest transition-all duration-300">
+                  Search
+                </button>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+              <button className="bg-white text-black px-12 py-6 rounded-full font-black text-lg flex items-center group hover:bg-neutral-200 transition-all duration-300 shadow-2xl relative overflow-hidden">
+                <span className="relative z-10 uppercase tracking-[0.2em]">START PROJECT</span>
+                <ArrowRight className="ml-3 group-hover:translate-x-2 transition-transform relative z-10" />
+              </button>
+            </div>
           </motion.div>
         </div>
       </div>
@@ -220,8 +261,9 @@ const ProgressInfo = () => {
     <section className="py-32 px-6 bg-black text-white transition-colors duration-500 overflow-hidden relative">
       <div className="max-w-7xl mx-auto relative z-10 text-center">
         <Reveal className="mx-auto">
-          <h2 className="text-3xl md:text-6xl font-black mb-10 tracking-tight leading-[1] max-w-5xl mx-auto uppercase">
-            BUSINESSES GROWING WITH IN<span className="text-white/40">CODEX</span>
+          <h2 className="text-3xl md:text-6xl font-black mb-10 tracking-tight leading-[1] max-w-5xl mx-auto uppercase flex flex-col md:flex-row items-center justify-center gap-4">
+            BUSINESSES GROWING WITH
+            <img src="/inc-02.png" alt="INCODEX" className="h-10 md:h-16 w-auto inline-block" />
           </h2>
         </Reveal>
 
@@ -451,7 +493,7 @@ const Footer = () => (
     <div className="max-w-7xl mx-auto">
       <div className="grid md:grid-cols-4 gap-12 mb-16">
         <div className="col-span-2">
-          <div className="text-3xl font-black mb-6">IN<span className="text-white/40">CODEX</span></div>
+          <img src="/inc-02.png" alt="INCODEX" className="h-10 md:h-12 w-auto mb-6 object-contain" />
           <p className="text-white/50 max-w-sm mb-8">
             Superior software engineering firm specializing in complex system architectures and intelligent product development.
           </p>
@@ -491,6 +533,8 @@ const Footer = () => (
     </div>
   </footer>
 );
+
+// Portfolio component has been moved to Portfolio.jsx
 
 const Testimonials = () => {
   const reviews = [
@@ -680,23 +724,32 @@ const Blog = () => {
 };
 
 const App = () => {
-  const isDarkMode = true;
+  const [view, setView] = useState(() => localStorage.getItem('site_view') || 'home');
 
   useEffect(() => {
     document.documentElement.classList.add('dark');
-  }, []);
+    localStorage.setItem('site_view', view);
+  }, [view]);
 
   return (
     <div className="dark">
       <div className="bg-black min-h-screen font-sans selection:bg-white selection:text-black transition-colors duration-500">
-        <Navbar />
-        <Hero />
-        <Features />
-        <ServicesInfo />
-        <ProgressInfo />
-        <Testimonials />
-        <Blog />
-        <CTA />
+        <Navbar setView={setView} currentView={view} />
+
+        {view === 'home' ? (
+          <>
+            <Hero />
+            <Features />
+            <ServicesInfo />
+            {/* Portfolio is now a separate view */}
+            <Testimonials />
+            <Blog />
+            <CTA />
+          </>
+        ) : (
+          <Portfolio Reveal={Reveal} />
+        )}
+
         <Footer />
       </div>
     </div>
