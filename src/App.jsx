@@ -555,19 +555,19 @@ const Testimonials = () => {
             Working with INCODEX was a great experience. They developed a modern, user-friendly website that exceeded our expectations. Their attention to detail and dedication to delivering high-quality work stood out. The positive feedback from our users has been overwhelming. We highly recommend their services.
           </motion.p>
           <div className="flex flex-col items-center">
-            <div className="w-24 h-24 mb-6 relative bg-white/5 rounded-full overflow-hidden flex items-center justify-center">
+            <div className="h-24 mb-6 relative flex items-center justify-center">
               <User size={40} className="text-white opacity-20 absolute" />
               <img
                 src="/chairman.png"
                 alt="Chairman"
-                className="w-full h-full object-contain relative z-10 transition-opacity duration-500"
+                className="h-full w-auto object-contain relative z-10 transition-opacity duration-500"
                 onLoad={(e) => { e.target.style.opacity = 1; }}
                 onError={(e) => { e.target.style.opacity = 0; }}
                 style={{ opacity: 0 }}
               />
             </div>
             <span className="text-white font-black text-sm tracking-[0.4em] uppercase">Chairman</span>
-            <span className="text-white/30 text-[10px] mt-2 tracking-[0.2em] uppercase max-w-xs cursor-default">Dept. of Criminology, University of Dhaka</span>
+            <span className="text-white/30 text-[10px] mt-2 tracking-[0.2em] uppercase max-w-xs cursor-default text-center">Dept. of Criminology, University of Dhaka</span>
           </div>
         </div>
 
@@ -590,12 +590,12 @@ const Testimonials = () => {
                 {reveiw.content}
               </p>
               <div className="mt-auto flex items-center space-x-4">
-                <div className="w-10 h-10 rounded-full bg-neutral-900 overflow-hidden relative flex items-center justify-center flex-shrink-0">
+                <div className="h-10 relative flex items-center justify-center flex-shrink-0">
                   <User size={20} className="text-white opacity-20 absolute" />
                   <img
                     src={reveiw.image}
                     alt=""
-                    className="w-full h-full object-cover relative z-10 transition-opacity duration-500"
+                    className="h-full w-auto object-contain relative z-10 transition-opacity duration-500"
                     onLoad={(e) => { e.target.style.opacity = 1; }}
                     onError={(e) => { e.target.style.opacity = 0; }}
                     style={{ opacity: 0 }}
