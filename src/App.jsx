@@ -1,29 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Link,
-  NavLink,
-  useNavigate,
   useLocation
 } from 'react-router-dom';
-import {
-  Menu, X, ArrowRight, Search, Shield, Zap,
-  Globe, Layout, ChevronRight, Github, Twitter,
-  Linkedin, Sun, Moon, Link as LinkIcon,
-  ShoppingCart, Quote, User
-} from 'lucide-react';
+import { Menu, X, ArrowRight, Shield, Zap, Globe, Layout, ChevronRight, Github, Twitter, Linkedin, Sun, Moon, Link as LinkIcon, ShoppingCart, Quote, User } from 'lucide-react';
 import Portfolio from './Portfolio';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const navigate = useNavigate();
-  const searchInputRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -31,133 +20,59 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
-    if (isSearchOpen && searchInputRef.current) {
-      searchInputRef.current.focus();
-    }
-  }, [isSearchOpen]);
-
-  const navItems = [
-    { name: 'Home', path: '/' },
-    { name: 'Portfolio', path: '/portfolio' },
-    { name: 'Quote', path: '#quote' },
-    { name: 'Blog', path: '#blog' },
-    { name: 'About', path: '#footer' },
-    { name: 'Contact', path: '#footer' }
-  ];
-
-  const searchResults = [
-    { title: "Custom Software", category: "Service" },
-    { title: "Mobile Apps", category: "Development" },
-    { title: "Ajker Bangla", category: "Project" },
-    { title: "Nanotechnology", category: "Research" }
-  ].filter(item =>
-    searchTerm && item.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
     <nav className={`fixed w-full z-50 transition-all duration-500 ${isScrolled ? 'bg-black/90 backdrop-blur-md py-4 border-b border-white/10' : 'bg-transparent py-8'}`}>
-      <div className="max-w-7xl mx-auto px-6 flex items-center justify-between relative h-10">
-
-        {/* Logo */}
-        <Link
-          to="/"
-          className="z-50 shrink-0"
-          onClick={() => {
-            setIsMobileMenuOpen(false);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-        >
+      <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+        <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
           >
             <img src="/inc-02.png" alt="INCODEX" className="h-6 md:h-7 w-auto object-contain" />
           </motion.div>
         </Link>
 
-        {/* Desktop Menu - Centered */}
-        <div className="hidden lg:flex items-center space-x-8 absolute left-1/2 -translate-x-1/2">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.name}
-              to={item.path}
-              className={({ isActive }) =>
-                `text-[13px] font-black transition-all tracking-[0.1em] uppercase inline-block scale-x-[0.85] scale-y-[1.25] ${isActive && item.path !== '#quote' && item.path !== '#blog' && item.path !== '#footer'
-                  ? 'text-white'
-                  : 'text-white/40 hover:text-white'
-                }`
-              }
-            >
-              {item.name}
-            </NavLink>
-          ))}
+        {/* Desktop Menu */}
+        <div className="hidden md:flex items-center space-x-10">
+          {['Home', 'Portfolio', 'Quote', 'Blog', 'About', 'Contact'].map((item) => {
+            if (item === 'Home') {
+              return (
+                <Link
+                  key={item}
+                  to="/"
+                  className="text-sm font-bold text-white/50 hover:text-white transition-colors tracking-widest uppercase"
+                >
+                  {item}
+                </Link>
+              );
+            }
+            if (item === 'Portfolio') {
+              return (
+                <Link
+                  key={item}
+                  to="/portfolio"
+                  className="text-sm font-bold text-white/50 hover:text-white transition-colors tracking-widest uppercase"
+                >
+                  {item}
+                </Link>
+              );
+            }
+            return (
+              <a
+                key={item}
+                href={`#${item.toLowerCase()}`}
+                className="text-sm font-bold text-white/50 hover:text-white transition-colors tracking-widest uppercase"
+              >
+                {item}
+              </a>
+            );
+          })}
         </div>
 
-        {/* Right Actions: Search + Mobile Menu */}
-        <div className="flex items-center space-x-2 md:space-x-4 z-50">
-          {/* Desktop Search */}
-          <div className="hidden md:flex items-center relative">
-            <AnimatePresence>
-              {isSearchOpen && (
-                <motion.div
-                  initial={{ width: 0, opacity: 0 }}
-                  animate={{ width: 240, opacity: 1 }}
-                  exit={{ width: 0, opacity: 0 }}
-                  className="overflow-hidden mr-2"
-                >
-                  <input
-                    ref={searchInputRef}
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Search..."
-                    className="w-full bg-white/5 border border-white/10 rounded-full py-2 px-4 text-xs text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all"
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
-            <button
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
-              className="p-2 text-white/40 hover:text-white transition-colors"
-            >
-              {isSearchOpen ? <X size={18} /> : <Search size={18} />}
-            </button>
-
-            {/* Results Dropdown */}
-            <AnimatePresence>
-              {isSearchOpen && searchTerm && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  className="absolute top-full right-0 mt-4 w-64 bg-neutral-900 border border-white/10 rounded-xl overflow-hidden backdrop-blur-2xl shadow-2xl"
-                >
-                  {searchResults.length > 0 ? (
-                    <div className="p-1">
-                      {searchResults.map((result, idx) => (
-                        <button
-                          key={idx}
-                          className="w-full flex items-center justify-between p-3 hover:bg-white/5 rounded-lg transition-colors text-left group"
-                        >
-                          <span className="text-white text-[10px] font-bold uppercase tracking-tight">{result.title}</span>
-                          <span className="text-[8px] text-white/20 font-black tracking-widest uppercase">{result.category}</span>
-                        </button>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="p-6 text-center text-white/20 text-[8px] font-bold uppercase tracking-widest">
-                      No results found
-                    </div>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
+        <div className="flex items-center space-x-4">
           <button
-            className="lg:hidden p-2 text-white/40 hover:text-white transition-colors"
+            className="md:hidden p-2 text-white"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -172,31 +87,45 @@ const Navbar = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-black border-b border-white/10 overflow-hidden"
+            className="md:hidden bg-black border-b border-white/10 overflow-hidden"
           >
-            <div className="px-6 py-10 flex flex-col space-y-8 text-center items-center">
-              {/* Mobile Search */}
-              <div className="w-full max-w-xs relative mb-4">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" size={16} />
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search..."
-                  className="w-full bg-white/5 border border-white/10 rounded-full py-3 pl-12 pr-4 text-sm text-white focus:outline-none"
-                />
-              </div>
-
-              {navItems.map((item) => (
-                <NavLink
-                  key={item.name}
-                  to={item.path}
-                  className="text-lg font-bold text-white uppercase tracking-[0.2em]"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {item.name}
-                </NavLink>
-              ))}
+            <div className="px-6 py-8 flex flex-col space-y-6">
+              {['Home', 'Portfolio', 'Quote', 'Blog', 'About', 'Contact'].map((item) => {
+                if (item === 'Home') {
+                  return (
+                    <Link
+                      key={item}
+                      to="/"
+                      className="text-xl font-bold text-white uppercase tracking-widest"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {item}
+                    </Link>
+                  );
+                }
+                if (item === 'Portfolio') {
+                  return (
+                    <Link
+                      key={item}
+                      to="/portfolio"
+                      className="text-xl font-bold text-white uppercase tracking-widest"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {item}
+                    </Link>
+                  );
+                }
+                return (
+                  <a
+                    key={item}
+                    href={`#${item.toLowerCase()}`}
+                    className="text-xl font-bold text-white uppercase tracking-widest"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {item}
+                  </a>
+                );
+              })}
             </div>
           </motion.div>
         )}
@@ -220,48 +149,97 @@ const Reveal = ({ children, delay = 0, className = "" }) => (
 
 const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center pt-32 px-6 overflow-hidden bg-black">
+    <section className="relative min-h-screen flex items-center pt-20 px-6 overflow-hidden bg-black">
       {/* Background large text for texture */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden z-0">
         <img
           src="/inc-02.png"
-          alt=""
-          className="w-[300px] md:w-[500px] lg:w-[700px] opacity-[0.03] select-none pointer-events-none filter grayscale brightness-200"
+          alt="INCODEX"
+          className="w-[300px] md:w-[600px] lg:w-[900px] opacity-[0.05] grayscale brightness-200"
         />
       </div>
 
-
-      <div className="max-w-7xl mx-auto w-full relative z-20 pt-2 pb-20 flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-16">
-
-        {/* Left Side: Hero Image */}
+      {/* Background decoration with floating animation */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-10">
         <motion.div
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 1, ease: "easeOut" }}
-          className="relative w-full lg:w-auto flex items-center justify-center lg:justify-end lg:-mt-24"
-        >
-          <div className="relative w-full max-w-[60px] md:max-w-[100px] lg:max-w-[140px]">
-            <img
-              src="/inc-04.png"
-              alt="INCODEX Asset"
-              className="w-full h-auto object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.1)]"
-            />
-          </div>
-        </motion.div>
+          animate={{
+            x: [0, 50, 0],
+            y: [0, 30, 0],
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+          className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-white/[0.03] blur-[120px] rounded-full"
+        />
+        <motion.div
+          animate={{
+            x: [0, -30, 0],
+            y: [0, 50, 0],
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-white/[0.03] blur-[120px] rounded-full"
+        />
+      </div>
 
-        {/* Right Side: Header Text */}
-        <div className="w-full lg:w-1/2 text-center lg:text-left flex flex-col items-center lg:items-start">
-          <Reveal className="mx-auto lg:ml-0">
+      <div className="max-w-7xl mx-auto w-full relative z-20 pt-12 pb-20 flex flex-col items-center justify-center min-h-[80vh]">
+
+        {/* Central Atomic Animation - High Frequency */}
+        <div className="relative w-full h-[150px] flex items-center justify-center mb-6 pointer-events-none scale-75 md:scale-100 will-change-transform">
+          {/* Nucleus */}
+          <motion.div
+            animate={{
+              scale: [1, 1.4, 1],
+              opacity: [0.8, 1, 0.8]
+            }}
+            transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
+            className="w-2 h-2 bg-white rounded-full shadow-[0_0_20px_white] z-30"
+          />
+          <div className="absolute w-20 h-20 bg-white/5 blur-[35px] rounded-full z-10" />
+
+          {/* 4 Primary Orbits - Speed Optimized */}
+          {[0, 90, 45, 135].map((rotate, i) => (
+            <div
+              key={i}
+              className="absolute will-change-transform"
+              style={{
+                width: '120px',
+                height: '120px',
+                transform: `rotateZ(${rotate}deg) rotateX(65deg)`,
+                transformStyle: 'preserve-3d'
+              }}
+            >
+              <div
+                className="absolute inset-0 border border-white/10 rounded-full"
+                style={{ transform: 'translateZ(0)' }}
+              />
+              <motion.div
+                animate={{ rotate: [0, 360] }}
+                transition={{
+                  duration: 1 + i * 0.4,
+                  repeat: Infinity,
+                  ease: "linear"
+                }}
+                className="absolute inset-0"
+              >
+                <div
+                  className="absolute top-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-white rounded-full shadow-[0_0_10px_white]"
+                  style={{ transform: 'rotateX(-65deg)' }}
+                />
+              </motion.div>
+            </div>
+          ))}
+        </div>
+
+        <div className="text-center max-w-4xl mx-auto">
+          <Reveal className="mx-auto">
             <h1 className="text-4xl md:text-5xl lg:text-7xl font-black text-white mb-2 leading-[1.1] tracking-tight uppercase">
               Beautiful things
             </h1>
           </Reveal>
-          <Reveal delay={0.1} className="mx-auto lg:ml-0">
+          <Reveal delay={0.1} className="mx-auto">
             <h1 className="text-4xl md:text-5xl lg:text-7xl font-black text-white mb-2 leading-[1.1] tracking-tight uppercase">
               come together
             </h1>
           </Reveal>
-          <Reveal delay={0.2} className="mx-auto lg:ml-0">
+          <Reveal delay={0.2} className="mx-auto">
             <h1 className="text-3xl md:text-4xl lg:text-6xl font-black text-white mb-8 leading-[1.1] tracking-tight uppercase">
               ONE <span className="text-white/40">BYTE</span> at a time.
             </h1>
@@ -271,17 +249,17 @@ const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-base md:text-lg lg:text-xl text-white/50 mb-12 leading-relaxed font-light max-w-2xl lg:max-w-none"
+            className="text-base md:text-lg lg:text-xl text-white/50 mb-12 leading-relaxed font-light px-4 max-w-2xl mx-auto text-center"
           >
             You have no idea how <span className="text-white font-bold">RAPIDLY YOU CAN GROW.</span> <br className="hidden md:block" />
-            Let’s find out together.
+            Let's find out together.
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.8 }}
-            className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6"
+            className="flex flex-col sm:flex-row items-center justify-center gap-6"
           >
             <button className="bg-white text-black px-12 py-6 rounded-full font-black text-lg flex items-center group hover:bg-neutral-200 transition-all duration-300 shadow-2xl relative overflow-hidden">
               <span className="relative z-10 uppercase tracking-[0.2em]">START PROJECT</span>
@@ -309,8 +287,7 @@ const ProgressInfo = () => {
       <div className="max-w-7xl mx-auto relative z-10 text-center">
         <Reveal className="mx-auto">
           <h2 className="text-3xl md:text-6xl font-black mb-10 tracking-tight leading-[1] max-w-5xl mx-auto uppercase flex flex-col md:flex-row items-center justify-center gap-4">
-            BUSINESSES GROWING WITH
-            <img src="/inc-02.png" alt="INCODEX" className="h-10 md:h-16 w-auto inline-block" />
+            BUSINESSES GROWING WITH <img src="/inc-02.png" alt="INCODEX" className="h-8 md:h-16 w-auto inline-block" />
           </h2>
         </Reveal>
 
@@ -392,6 +369,7 @@ const ProgressInfo = () => {
     </section>
   );
 };
+
 const ServicesInfo = () => {
   return (
     <section className="py-24 px-6 bg-black text-white transition-colors duration-500">
@@ -416,6 +394,24 @@ const ServicesInfo = () => {
     </section>
   );
 };
+
+const FeatureCard = ({ icon: Icon, title, description }) => (
+  <motion.div
+    whileHover={{ y: -10 }}
+    className="p-8 rounded-3xl bg-neutral-900 border border-white/5 hover:border-white/20 transition-all group"
+  >
+    <div className="w-14 h-14 bg-white text-black rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-white/5 group-hover:rotate-6 transition-transform">
+      <Icon size={28} />
+    </div>
+    <h3 className="text-2xl font-bold text-white mb-4">{title}</h3>
+    <p className="text-white/50 leading-relaxed mb-6">
+      {description}
+    </p>
+    <a href="#" className="inline-flex items-center text-sm font-bold text-white group-hover:underline">
+      Learn more <ChevronRight size={16} className="ml-1" />
+    </a>
+  </motion.div>
+);
 
 const Features = () => {
   const features = [
@@ -522,7 +518,9 @@ const Footer = () => (
     <div className="max-w-7xl mx-auto">
       <div className="grid md:grid-cols-4 gap-12 mb-16">
         <div className="col-span-2">
-          <img src="/inc-02.png" alt="INCODEX" className="h-10 md:h-12 w-auto mb-6 object-contain" />
+          <div className="mb-6">
+            <img src="/inc-04.png" alt="INCODEX" className="h-8 w-auto" />
+          </div>
           <p className="text-white/50 max-w-sm mb-8">
             Superior software engineering firm specializing in complex system architectures and intelligent product development.
           </p>
@@ -567,21 +565,21 @@ const Testimonials = () => {
   const reviews = [
     {
       title: "A game-changer for our online news portal!",
-      content: "The team at INCODEX delivered a fast, dynamic website for our news agency. The design perfectly balances aesthetics with functionality, easy to navigate and stay updated. We’ve got more engagement and traffic.",
+      content: "The team at INCODEX delivered a fast, dynamic website for our news agency. The design perfectly balances aesthetics with functionality, easy to navigate and stay updated. We've got more engagement and traffic.",
       author: "A R Ahmed Sujon",
       role: "Editor, Nobojug News",
       image: "/review1.png"
     },
     {
       title: "Our online store to a sales powerhouse!",
-      content: "We couldn’t be happier with the e-commerce website built by INCODEX. The design is sleek, user-friendly, and optimized for conversions. Our customers love the smooth shopping experience, and we’ve already seen an increase in sales.",
+      content: "We couldn't be happier with the e-commerce website built by INCODEX. The design is sleek, user-friendly, and optimized for conversions. Our customers love the smooth shopping experience, and we've already seen an increase in sales.",
       author: "Shamim Reza",
       role: "Owner, Shopping 24",
       image: "/review2.png"
     },
     {
       title: "A perfect platform for our mission!",
-      content: "The website INCODEX created is professional, user-friendly, and truly reflects our organization’s values. It’s made connecting with our community much easier. We’re thrilled with the results and highly recommend their work!",
+      content: "The website INCODEX created is professional, user-friendly, and truly reflects our organization's values. It's made connecting with our community much easier. We're thrilled with the results and highly recommend their work!",
       author: "Tasbil Tonmoy",
       role: "President, CDFB",
       image: "/review3.png"
@@ -644,7 +642,7 @@ const Testimonials = () => {
 
         {/* Secondary Reviews Grid */}
         <div className="grid md:grid-cols-3 gap-12">
-          {reviews.map((reveiw, i) => (
+          {reviews.map((review, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 30 }}
@@ -655,16 +653,16 @@ const Testimonials = () => {
             >
               <Quote size={20} className="text-white opacity-10 mb-6 group-hover:opacity-100 transition-opacity duration-500" />
               <h4 className="text-lg font-black text-white mb-6 uppercase tracking-tight leading-tight flex-grow">
-                {reveiw.title}
+                {review.title}
               </h4>
               <p className="text-sm text-white/40 leading-relaxed mb-10 font-light">
-                {reveiw.content}
+                {review.content}
               </p>
               <div className="mt-auto flex items-center space-x-4">
                 <div className="h-10 relative flex items-center justify-center flex-shrink-0">
                   <User size={20} className="text-white opacity-20 absolute" />
                   <img
-                    src={reveiw.image}
+                    src={review.image}
                     alt=""
                     className="h-full w-auto object-contain relative z-10 transition-opacity duration-500"
                     onLoad={(e) => { e.target.style.opacity = 1; }}
@@ -673,8 +671,8 @@ const Testimonials = () => {
                   />
                 </div>
                 <div>
-                  <p className="text-white font-black text-[10px] uppercase tracking-widest">{reveiw.author}</p>
-                  <p className="text-white/20 text-[8px] uppercase tracking-widest mt-1">{reveiw.role}</p>
+                  <p className="text-white font-black text-[10px] uppercase tracking-widest">{review.author}</p>
+                  <p className="text-white/20 text-[8px] uppercase tracking-widest mt-1">{review.role}</p>
                 </div>
               </div>
             </motion.div>
@@ -698,7 +696,7 @@ const Blog = () => {
       excerpt: "Cloud computing has revolutionized the way we store, manage, and access data. By providing on-demand computing resources over the internet, cloud computing offers numerous benefits that cater to the needs…"
     },
     {
-      title: "The Importance of Machine Learning in Today’s World",
+      title: "The Importance of Machine Learning in Today's World",
       date: "August 2, 2024",
       excerpt: "Machine learning, a subset of artificial intelligence, has become a game-changer in various industries. It involves training algorithms to learn from data, enabling systems to make predictions and decisions without…"
     }
@@ -755,10 +753,8 @@ const AppContents = () => {
 
   useEffect(() => {
     if (location.hash) {
-      const element = document.getElementById(location.hash.substring(1));
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
+      const el = document.getElementById(location.hash.substring(1));
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
     } else {
       window.scrollTo(0, 0);
     }
@@ -767,7 +763,6 @@ const AppContents = () => {
   return (
     <div className="bg-black min-h-screen font-sans selection:bg-white selection:text-black transition-colors duration-500">
       <Navbar />
-
       <Routes>
         <Route path="/" element={
           <>
@@ -782,7 +777,6 @@ const AppContents = () => {
         } />
         <Route path="/portfolio" element={<Portfolio Reveal={Reveal} />} />
       </Routes>
-
       <Footer />
     </div>
   );
@@ -795,9 +789,7 @@ const App = () => {
 
   return (
     <Router>
-      <div className="dark">
-        <AppContents />
-      </div>
+      <AppContents />
     </Router>
   );
 };

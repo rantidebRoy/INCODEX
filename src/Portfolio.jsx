@@ -146,7 +146,7 @@ const Portfolio = ({ Reveal }) => {
                             initial={{ scale: 0.9, y: 20 }}
                             animate={{ scale: 1, y: 0 }}
                             exit={{ scale: 0.9, y: 20 }}
-                            className="w-full h-full max-w-6xl bg-neutral-900 border border-white/10 rounded-3xl overflow-hidden flex flex-col shadow-[0_0_100px_rgba(0,0,0,0.5)]"
+                            className="w-full h-full max-w-[1200px] bg-neutral-900 border border-white/10 rounded-3xl overflow-hidden flex flex-col shadow-[0_0_100px_rgba(0,0,0,0.5)]"
                         >
                             {/* Modal Header / Browser Top Bar */}
                             <div className="h-14 bg-neutral-950 border-b border-white/5 flex items-center justify-between px-6 shrink-0">
