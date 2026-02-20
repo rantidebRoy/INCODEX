@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-black: #000000;
+  --color-brand-white: #ffffff;
+}
+
+@utility text-outline-white {
+  -webkit-text-stroke: 1px white;
+}
+
+@utility text-outline-black {
+  -webkit-text-stroke: 1px black;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.dark {
+  color-scheme: dark;
+}
