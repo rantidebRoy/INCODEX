@@ -591,7 +591,21 @@ const QuoteSection = () => {
 
           {/* Service Multi-select */}
           <div className="space-y-6">
-            <label className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 ml-4">Select Services</label>
+            <div className="flex items-end justify-between px-4 mb-2">
+              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30">Select Services</label>
+              <div className="text-right">
+                <span className="text-[8px] font-black uppercase tracking-[0.4em] text-white/20 block mb-1">Estimated Investment</span>
+                <motion.div
+                  key={totalCost}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="flex items-baseline"
+                >
+                  <span className="text-2xl md:text-3xl font-black text-white tracking-tighter">${totalCost}</span>
+                  <span className="text-white/20 text-[10px] font-bold ml-1">USD</span>
+                </motion.div>
+              </div>
+            </div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {services.map(service => (
                 <button
@@ -620,20 +634,8 @@ const QuoteSection = () => {
             />
           </div>
 
-          <div className="flex flex-col md:flex-row items-center justify-between gap-12 pt-12 border-t border-white/5">
-            <div className="text-left">
-              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 block mb-2">Estimated Investment</span>
-              <motion.div
-                key={totalCost}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-baseline"
-              >
-                <span className="text-5xl font-black text-white tracking-tighter">${totalCost}</span>
-                <span className="text-white/20 text-xs font-bold ml-2">USD</span>
-              </motion.div>
-            </div>
-            <button className="group relative w-full md:w-auto overflow-hidden bg-white text-black px-16 py-7 rounded-full font-black text-xl transition-all duration-500 hover:bg-neutral-200">
+          <div className="flex justify-center pt-12 border-t border-white/5">
+            <button className="group relative w-full md:w-auto overflow-hidden bg-white text-black px-24 py-7 rounded-full font-black text-xl transition-all duration-500 hover:bg-neutral-200">
               <span className="relative z-10 uppercase tracking-[0.3em]">Quote</span>
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
             </button>
