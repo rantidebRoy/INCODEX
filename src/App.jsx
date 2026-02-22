@@ -5,7 +5,8 @@ import {
   Routes,
   Route,
   Link,
-  useLocation
+  useLocation,
+  useParams
 } from 'react-router-dom';
 import { Menu, X, ArrowRight, Shield, Zap, Globe, Layout, ChevronRight, Github, Twitter, Linkedin, Sun, Moon, Link as LinkIcon, ShoppingCart, Quote, User } from 'lucide-react';
 import Portfolio from './Portfolio';
@@ -873,16 +874,22 @@ const Blog = () => {
   const posts = [
     {
       title: "The Importance of Website Maintenance",
+      slug: "website-maintenance",
+      image: "/blogs/blog1.jpg",
       date: "October 1, 2024",
       excerpt: "Launching a website is just the beginning; ongoing maintenance is crucial to ensure its continued success. Regular website maintenance involves updating content, monitoring performance, and addressing technical issues to provide…"
     },
     {
       title: "Harnessing the Power of Cloud Computing",
+      slug: "cloud-computing",
+      image: "/blogs/blog2.jpg",
       date: "September 28, 2024",
-      excerpt: "Cloud computing has revolutionized the way we store, manage, and access data. By providing on-demand computing resources over the internet, cloud computing offers numerous benefits that cater to the needs…"
+      excerpt: "Cloud computing has revolutionized the way we store, manage, and access data. By providing on-demand computing resources over the internet, it offers numerous benefits that cater to the needs of modern businesses."
     },
     {
       title: "The Importance of Machine Learning in Today's World",
+      slug: "machine-learning",
+      image: "/blogs/blog3.jpg",
       date: "August 2, 2024",
       excerpt: "Machine learning, a subset of artificial intelligence, has become a game-changer in various industries. It involves training algorithms to learn from data, enabling systems to make predictions and decisions without…"
     }
@@ -905,7 +912,7 @@ const Blog = () => {
 
         <div className="grid md:grid-cols-3 gap-12">
           {posts.map((post, i) => (
-            <a key={i} href="#" className="block group">
+            <Link key={i} to={`/blog/${post.slug}`} className="block group">
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -913,7 +920,14 @@ const Blog = () => {
                 transition={{ delay: i * 0.1, duration: 0.6 }}
                 className="flex flex-col h-full cursor-pointer"
               >
-                <div className="text-[10px] text-white/30 font-black uppercase tracking-[0.3em] mb-8 group-hover:text-white transition-colors duration-500">
+                <div className="relative aspect-[16/9] overflow-hidden rounded-2xl mb-8 border border-white/5">
+                  <img
+                    src={post.image}
+                    alt={post.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-60 group-hover:opacity-100"
+                  />
+                </div>
+                <div className="text-[10px] text-white/30 font-black uppercase tracking-[0.3em] mb-4 group-hover:text-white transition-colors duration-500">
                   {post.date}
                 </div>
                 <h3 className="text-xl font-black text-white mb-6 uppercase tracking-tight leading-tight group-hover:translate-x-2 transition-transform duration-500">
@@ -926,11 +940,123 @@ const Blog = () => {
                   READ STORY <ArrowRight size={14} className="ml-4 opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 transition-all duration-500" />
                 </div>
               </motion.div>
-            </a>
+            </Link>
           ))}
         </div>
       </div>
     </section>
+  );
+};
+
+const BlogDetail = () => {
+  const { slug } = useParams();
+  const [content, setContent] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  const blogSlugs = ['website-maintenance', 'cloud-computing', 'machine-learning'];
+  const blogData = {
+    'website-maintenance': {
+      title: "The Importance of Website Maintenance",
+      date: "October 1, 2024",
+      image: "/blogs/blog1.jpg"
+    },
+    'cloud-computing': {
+      title: "Harnessing the Power of Cloud Computing",
+      date: "September 28, 2024",
+      image: "/blogs/blog2.jpg"
+    },
+    'machine-learning': {
+      title: "The Importance of Machine Learning in Today's World",
+      date: "August 2, 2024",
+      image: "/blogs/blog3.jpg"
+    }
+  };
+
+  const currentIndex = blogSlugs.indexOf(slug);
+  const prevSlug = currentIndex > 0 ? blogSlugs[currentIndex - 1] : null;
+  const nextSlug = currentIndex < blogSlugs.length - 1 ? blogSlugs[currentIndex + 1] : null;
+
+  const blog = blogData[slug];
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    setLoading(true);
+    if (slug) {
+      fetch(`/blogs/${slug}.txt`)
+        .then(res => res.text())
+        .then(text => {
+          setContent(text);
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error(err);
+          setLoading(false);
+        });
+    }
+  }, [slug]);
+
+  if (!blog) return <div className="min-h-screen pt-40 px-6 text-center text-white">Blog not found.</div>;
+
+  return (
+    <div className="min-h-screen pt-40 pb-32 px-6 bg-black text-white selection:bg-white selection:text-black">
+      <div className="max-w-3xl mx-auto">
+        <Link to="/#blog" className="inline-flex items-center text-[10px] font-black text-white/40 hover:text-white uppercase tracking-[0.3em] transition-all duration-500 mb-12 group">
+          <ArrowRight size={14} className="mr-4 rotate-180 group-hover:-translate-x-2 transition-transform" /> BACK TO JOURNAL
+        </Link>
+        <motion.div
+          key={slug}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <div className="text-[10px] text-white/30 font-black uppercase tracking-[0.3em] mb-6">{blog.date}</div>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-12 tracking-tight uppercase leading-[1.1]">{blog.title}</h1>
+          <div className="w-12 h-1 bg-white opacity-20 mb-16" />
+
+          <div className="w-full aspect-video rounded-3xl overflow-hidden mb-16 border border-white/5">
+            <img
+              src={blog.image}
+              alt={blog.title}
+              className="w-full h-full object-cover opacity-80"
+            />
+          </div>
+
+          <div className="prose prose-invert prose-lg max-w-none mb-24">
+            {loading ? (
+              <div className="animate-pulse space-y-4 flex flex-col">
+                <div className="h-4 bg-white/10 rounded w-3/4"></div>
+                <div className="h-4 bg-white/10 rounded w-1/2"></div>
+                <div className="h-4 bg-white/10 rounded w-5/6"></div>
+              </div>
+            ) : (
+              <div className="text-white/60 leading-relaxed font-light whitespace-pre-wrap text-lg md:text-xl">
+                {content}
+              </div>
+            )}
+          </div>
+
+          {/* Post Navigation */}
+          <div className="flex flex-col md:flex-row justify-between items-center gap-10 pt-16 border-t border-white/5">
+            <div className="w-full md:w-1/2">
+              {prevSlug && (
+                <Link to={`/blog/${prevSlug}`} className="group block text-left">
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/20 mb-4 block group-hover:text-white/40 transition-colors italic">PREVIOUS STORY</span>
+                  <h4 className="text-lg font-black text-white uppercase tracking-tight group-hover:translate-x-[-10px] transition-transform duration-500">{blogData[prevSlug].title}</h4>
+                </Link>
+              )}
+            </div>
+            <div className="w-full md:w-1/2 text-right">
+              {nextSlug && (
+                <Link to={`/blog/${nextSlug}`} className="group block text-right">
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/20 mb-4 block group-hover:text-white/40 transition-colors italic">NEXT STORY</span>
+                  <h4 className="text-lg font-black text-white uppercase tracking-tight group-hover:translate-x-[10px] transition-transform duration-500">{blogData[nextSlug].title}</h4>
+                </Link>
+              )}
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </div>
   );
 };
 
@@ -942,7 +1068,9 @@ const AppContents = () => {
       const el = document.getElementById(location.hash.substring(1));
       if (el) el.scrollIntoView({ behavior: 'smooth' });
     } else {
-      window.scrollTo(0, 0);
+      if (location.pathname === '/') {
+        window.scrollTo(0, 0);
+      }
     }
   }, [location.pathname, location.hash]);
 
@@ -963,6 +1091,7 @@ const AppContents = () => {
           </>
         } />
         <Route path="/portfolio" element={<Portfolio Reveal={Reveal} />} />
+        <Route path="/blog/:slug" element={<BlogDetail />} />
       </Routes>
       <Footer />
     </div>
