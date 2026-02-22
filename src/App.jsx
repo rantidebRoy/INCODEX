@@ -552,8 +552,8 @@ const QuoteSection = () => {
               <label className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 ml-4">First Name</label>
               <input
                 type="text"
-                placeholder="JOHN"
-                className="w-full bg-neutral-950 border border-white/10 rounded-2xl px-8 py-5 text-white focus:outline-none focus:border-white/40 transition-all duration-300 placeholder:text-white/10 text-sm font-bold tracking-widest uppercase"
+                placeholder="John"
+                className="w-full bg-neutral-950 border border-white/10 rounded-2xl px-8 py-5 text-white focus:outline-none focus:border-white/40 transition-all duration-300 placeholder:text-white/10 text-sm font-bold tracking-widest"
                 onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
               />
             </div>
@@ -561,8 +561,8 @@ const QuoteSection = () => {
               <label className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 ml-4">Last Name</label>
               <input
                 type="text"
-                placeholder="DOE"
-                className="w-full bg-neutral-950 border border-white/10 rounded-2xl px-8 py-5 text-white focus:outline-none focus:border-white/40 transition-all duration-300 placeholder:text-white/10 text-sm font-bold tracking-widest uppercase"
+                placeholder="Doe"
+                className="w-full bg-neutral-950 border border-white/10 rounded-2xl px-8 py-5 text-white focus:outline-none focus:border-white/40 transition-all duration-300 placeholder:text-white/10 text-sm font-bold tracking-widest"
                 onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
               />
             </div>
@@ -573,8 +573,8 @@ const QuoteSection = () => {
               <label className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 ml-4">Email Address</label>
               <input
                 type="email"
-                placeholder="JOHN@EXAMPLE.COM"
-                className="w-full bg-neutral-950 border border-white/10 rounded-2xl px-8 py-5 text-white focus:outline-none focus:border-white/40 transition-all duration-300 placeholder:text-white/10 text-sm font-bold tracking-widest uppercase"
+                placeholder="john@example.com"
+                className="w-full bg-neutral-950 border border-white/10 rounded-2xl px-8 py-5 text-white focus:outline-none focus:border-white/40 transition-all duration-300 placeholder:text-white/10 text-sm font-bold tracking-widest"
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               />
             </div>
@@ -582,8 +582,8 @@ const QuoteSection = () => {
               <label className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 ml-4">Subject</label>
               <input
                 type="text"
-                placeholder="PROJECT INQUIRY"
-                className="w-full bg-neutral-950 border border-white/10 rounded-2xl px-8 py-5 text-white focus:outline-none focus:border-white/40 transition-all duration-300 placeholder:text-white/10 text-sm font-bold tracking-widest uppercase"
+                placeholder="Project Inquiry"
+                className="w-full bg-neutral-950 border border-white/10 rounded-2xl px-8 py-5 text-white focus:outline-none focus:border-white/40 transition-all duration-300 placeholder:text-white/10 text-sm font-bold tracking-widest"
                 onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
               />
             </div>
@@ -614,8 +614,8 @@ const QuoteSection = () => {
             <label className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 ml-4">Your Message</label>
             <textarea
               rows="6"
-              placeholder="TELL US ABOUT YOUR PROJECT..."
-              className="w-full bg-neutral-950 border border-white/10 rounded-2xl px-8 py-6 text-white focus:outline-none focus:border-white/40 transition-all duration-300 placeholder:text-white/10 text-sm font-bold tracking-widest uppercase resize-none"
+              placeholder="Tell us about your project..."
+              className="w-full bg-neutral-950 border border-white/10 rounded-2xl px-8 py-6 text-white focus:outline-none focus:border-white/40 transition-all duration-300 placeholder:text-white/10 text-sm font-bold tracking-widest resize-none"
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
             />
           </div>
