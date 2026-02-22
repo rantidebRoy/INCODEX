@@ -443,7 +443,7 @@ const Features = () => {
   ];
 
   return (
-    <section id="quote" className="py-32 px-6 bg-black border-t border-white/5 relative overflow-hidden">
+    <section id="expertise" className="py-32 px-6 bg-black border-t border-white/5 relative overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-24">
           <Reveal className="mx-auto">
@@ -486,6 +486,159 @@ const Features = () => {
             </motion.div>
           ))}
         </div>
+      </div>
+    </section>
+  );
+};
+
+const QuoteSection = () => {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
+
+  const [selectedServices, setSelectedServices] = useState([]);
+
+  const services = [
+    { id: 'web-dev', name: 'Web Development', price: 400 },
+    { id: 'ui-ux', name: 'UI/UX Design', price: 150 },
+    { id: 'e-commerce', name: 'E-commerce Solution', price: 600 },
+    { id: 'seo', name: 'SEO Optimization', price: 200 },
+    { id: 'logo', name: 'Logo Design', price: 50 },
+    { id: 'backlinks', name: 'Backlink Building', price: 100 },
+  ];
+
+  const handleServiceToggle = (serviceId) => {
+    setSelectedServices(prev =>
+      prev.includes(serviceId)
+        ? prev.filter(id => id !== serviceId)
+        : [...prev, serviceId]
+    );
+  };
+
+  const totalCost = selectedServices.reduce((acc, id) => {
+    const service = services.find(s => s.id === id);
+    return acc + (service ? service.price : 0);
+  }, 0);
+
+  return (
+    <section id="quote" className="py-32 px-6 bg-black border-t border-white/5 relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none opacity-[0.03] z-0">
+        <div className="w-full h-full bg-[radial-gradient(circle_at_center,white_0%,transparent_70%)] blur-[120px]" />
+      </div>
+
+      <div className="max-w-4xl mx-auto relative z-10">
+        <div className="text-center mb-16">
+          <Reveal className="mx-auto">
+            <h2 className="text-4xl md:text-6xl font-black text-white mb-6 uppercase tracking-tight">Request a Quote</h2>
+          </Reveal>
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-white/50 font-light text-sm tracking-wide"
+          >
+            FILL OUT THE FORM BELOW AND WE'LL GET BACK TO YOU WITH A TAILORED PROPOSAL.
+          </motion.p>
+        </div>
+
+        <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="space-y-3">
+              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 ml-4">First Name</label>
+              <input
+                type="text"
+                placeholder="JOHN"
+                className="w-full bg-neutral-950 border border-white/10 rounded-2xl px-8 py-5 text-white focus:outline-none focus:border-white/40 transition-all duration-300 placeholder:text-white/10 text-sm font-bold tracking-widest uppercase"
+                onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+              />
+            </div>
+            <div className="space-y-3">
+              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 ml-4">Last Name</label>
+              <input
+                type="text"
+                placeholder="DOE"
+                className="w-full bg-neutral-950 border border-white/10 rounded-2xl px-8 py-5 text-white focus:outline-none focus:border-white/40 transition-all duration-300 placeholder:text-white/10 text-sm font-bold tracking-widest uppercase"
+                onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="space-y-3">
+              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 ml-4">Email Address</label>
+              <input
+                type="email"
+                placeholder="JOHN@EXAMPLE.COM"
+                className="w-full bg-neutral-950 border border-white/10 rounded-2xl px-8 py-5 text-white focus:outline-none focus:border-white/40 transition-all duration-300 placeholder:text-white/10 text-sm font-bold tracking-widest uppercase"
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              />
+            </div>
+            <div className="space-y-3">
+              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 ml-4">Subject</label>
+              <input
+                type="text"
+                placeholder="PROJECT INQUIRY"
+                className="w-full bg-neutral-950 border border-white/10 rounded-2xl px-8 py-5 text-white focus:outline-none focus:border-white/40 transition-all duration-300 placeholder:text-white/10 text-sm font-bold tracking-widest uppercase"
+                onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+              />
+            </div>
+          </div>
+
+          {/* Service Multi-select */}
+          <div className="space-y-6">
+            <label className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 ml-4">Select Services</label>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {services.map(service => (
+                <button
+                  key={service.id}
+                  type="button"
+                  onClick={() => handleServiceToggle(service.id)}
+                  className={`group relative px-4 py-5 rounded-2xl border text-[9px] font-black uppercase tracking-[0.2em] transition-all duration-500 overflow-hidden ${selectedServices.includes(service.id)
+                    ? 'bg-white text-black border-white shadow-[0_0_30px_rgba(255,255,255,0.1)]'
+                    : 'bg-neutral-950 text-white/40 border-white/5 hover:border-white/20'
+                    }`}
+                >
+                  <span className="relative z-10">{service.name}</span>
+                  <div className={`absolute inset-0 bg-white transition-transform duration-500 ${selectedServices.includes(service.id) ? 'scale-100' : 'scale-0'}`} />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <label className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 ml-4">Your Message</label>
+            <textarea
+              rows="6"
+              placeholder="TELL US ABOUT YOUR PROJECT..."
+              className="w-full bg-neutral-950 border border-white/10 rounded-2xl px-8 py-6 text-white focus:outline-none focus:border-white/40 transition-all duration-300 placeholder:text-white/10 text-sm font-bold tracking-widest uppercase resize-none"
+              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+            />
+          </div>
+
+          <div className="flex flex-col md:flex-row items-center justify-between gap-12 pt-12 border-t border-white/5">
+            <div className="text-left">
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 block mb-2">Estimated Investment</span>
+              <motion.div
+                key={totalCost}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-baseline"
+              >
+                <span className="text-5xl font-black text-white tracking-tighter">${totalCost}</span>
+                <span className="text-white/20 text-xs font-bold ml-2">USD</span>
+              </motion.div>
+            </div>
+            <button className="group relative w-full md:w-auto overflow-hidden bg-white text-black px-16 py-7 rounded-full font-black text-xl transition-all duration-500 hover:bg-neutral-200">
+              <span className="relative z-10 uppercase tracking-[0.3em]">Quote</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+            </button>
+          </div>
+        </form>
       </div>
     </section>
   );
@@ -800,6 +953,7 @@ const AppContents = () => {
             <Hero />
             <ProgressInfo />
             <Features />
+            <QuoteSection />
             <ServicesInfo />
             <Testimonials />
             <Blog />
