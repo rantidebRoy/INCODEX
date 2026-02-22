@@ -43,6 +43,7 @@ const Navbar = () => {
                   key={item}
                   to="/"
                   className="text-sm font-bold text-white/50 hover:text-white transition-colors tracking-widest uppercase"
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                 >
                   {item}
                 </Link>
@@ -60,13 +61,13 @@ const Navbar = () => {
               );
             }
             return (
-              <a
+              <Link
                 key={item}
-                href={`#${item.toLowerCase()}`}
+                to={`/#${item.toLowerCase()}`}
                 className="text-sm font-bold text-white/50 hover:text-white transition-colors tracking-widest uppercase"
               >
                 {item}
-              </a>
+              </Link>
             );
           })}
         </div>
@@ -98,7 +99,10 @@ const Navbar = () => {
                       key={item}
                       to="/"
                       className="text-xl font-bold text-white uppercase tracking-widest"
-                      onClick={() => setIsMobileMenuOpen(false)}
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
                     >
                       {item}
                     </Link>
@@ -117,14 +121,14 @@ const Navbar = () => {
                   );
                 }
                 return (
-                  <a
+                  <Link
                     key={item}
-                    href={`#${item.toLowerCase()}`}
+                    to={`/#${item.toLowerCase()}`}
                     className="text-xl font-bold text-white uppercase tracking-widest"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {item}
-                  </a>
+                  </Link>
                 );
               })}
             </div>
@@ -444,7 +448,7 @@ const Features = () => {
   ];
 
   return (
-    <section id="expertise" className="py-32 px-6 bg-black border-t border-white/5 relative overflow-hidden">
+    <section id="about" className="py-32 px-6 bg-black border-t border-white/5 relative overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-24">
           <Reveal className="mx-auto">
@@ -648,7 +652,7 @@ const QuoteSection = () => {
 };
 
 const CTA = () => (
-  <section className="py-24 px-6 bg-black overflow-hidden relative transition-colors duration-500 border-t border-white/5">
+  <section id="contact" className="py-24 px-6 bg-black overflow-hidden relative transition-colors duration-500 border-t border-white/5">
     <div className="max-w-7xl mx-auto relative z-10 text-center flex flex-col items-center justify-center gap-12">
       <div className="max-w-4xl">
         <Reveal className="mx-auto">
