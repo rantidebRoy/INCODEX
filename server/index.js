@@ -13,11 +13,17 @@ app.use(express.json());
 const authRoutes = require('./routes/authRoutes');
 const blogRoutes = require('./routes/blogRoutes');
 const quoteRoutes = require('./routes/quoteRoutes');
+const aboutRoutes = require('./routes/aboutRoutes');
+const settingsRoutes = require('./routes/settingsRoutes');
+const uploadRoutes = require('./routes/uploadRoutes');
 
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/blogs', blogRoutes);
 app.use('/api/quotes', quoteRoutes);
+app.use('/api/about', aboutRoutes);
+app.use('/api/settings', settingsRoutes);
+app.use('/api/upload', uploadRoutes);
 
 app.get('/', (req, res) => {
     res.send('INCODEX Server is Running');

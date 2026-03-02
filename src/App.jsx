@@ -18,128 +18,81 @@ const API_URL = 'http://localhost:5000/api';
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  if (location.pathname.startsWith('/admin')) return null;
+
+  const NavLink = ({ to, children }) => (
+    <Link
+      to={to}
+      className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40 hover:text-white transition-all duration-500 relative group overflow-hidden"
+    >
+      <span className="block group-hover:-translate-y-full transition-transform duration-500">{children}</span>
+      <span className="absolute top-full left-0 block group-hover:-translate-y-full transition-transform duration-500 text-white">{children}</span>
+    </Link>
+  );
+
   return (
-    <nav className={`fixed w-full z-50 transition-all duration-500 ${isScrolled ? 'bg-black/90 backdrop-blur-md py-4 border-b border-white/10' : 'bg-transparent py-8'}`}>
-      <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-        <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
-            <img src="/inc-02.png" alt="INCODEX" className="h-6 md:h-7 w-auto object-contain" />
-          </motion.div>
+    <motion.nav
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      className={`fixed top-0 left-0 w-full z-[100] transition-all duration-700 px-6 py-8 ${isScrolled ? 'bg-black/95 backdrop-blur-3xl py-6 border-b border-white/5' : 'bg-transparent'}`}
+    >
+      <div className="max-w-7xl mx-auto flex justify-between items-center">
+        <Link to="/" className="relative group overflow-hidden">
+          <img src="/inc-02.png" alt="INCODEX" className="h-6 md:h-7 opacity-80 group-hover:opacity-100 transition-all duration-700 hover:scale-105" />
         </Link>
 
-        {/* Desktop Menu */}
-        <div className="hidden md:flex items-center space-x-10">
-          {['Home', 'Portfolio', 'Quote', 'Blog', 'About', 'Contact'].map((item) => {
-            if (item === 'Home') {
-              return (
-                <Link
-                  key={item}
-                  to="/"
-                  className="text-sm font-bold text-white/50 hover:text-white transition-colors tracking-widest uppercase"
-                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                >
-                  {item}
-                </Link>
-              );
-            }
-            if (item === 'Portfolio') {
-              return (
-                <Link
-                  key={item}
-                  to="/portfolio"
-                  className="text-sm font-bold text-white/50 hover:text-white transition-colors tracking-widest uppercase"
-                >
-                  {item}
-                </Link>
-              );
-            }
-            return (
-              <Link
-                key={item}
-                to={`/#${item.toLowerCase()}`}
-                className="text-sm font-bold text-white/50 hover:text-white transition-colors tracking-widest uppercase"
-              >
-                {item}
-              </Link>
-            );
-          })}
+        <div className="hidden md:flex items-center space-x-12">
+          <NavLink to="/#features">Systems</NavLink>
+          <NavLink to="/#about">About</NavLink>
+          <NavLink to="/portfolio">Portfolio</NavLink>
+          <NavLink to="/#blog">Journal</NavLink>
+          <Link
+            to="/#quote"
+            className="bg-white text-black text-[10px] font-black uppercase tracking-[0.3em] px-8 py-3.5 rounded-full hover:bg-neutral-200 transition-all active:scale-95 duration-500"
+          >
+            Signal
+          </Link>
         </div>
 
-        <div className="flex items-center space-x-4">
-          <button
-            className="md:hidden p-2 text-white"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
+        <button
+          className="md:hidden text-white group"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          <div className="w-6 h-px bg-white mb-2 group-hover:w-8 transition-all duration-500"></div>
+          <div className="w-6 h-px bg-white group-hover:w-4 transition-all duration-500"></div>
+        </button>
       </div>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-black border-b border-white/10 overflow-hidden"
+            initial={{ opacity: 0, x: '100%' }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: '100%' }}
+            className="fixed inset-0 bg-black z-[101] flex flex-col p-12 justify-center"
           >
-            <div className="px-6 py-8 flex flex-col space-y-6">
-              {['Home', 'Portfolio', 'Quote', 'Blog', 'About', 'Contact'].map((item) => {
-                if (item === 'Home') {
-                  return (
-                    <Link
-                      key={item}
-                      to="/"
-                      className="text-xl font-bold text-white uppercase tracking-widest"
-                      onClick={() => {
-                        setIsMobileMenuOpen(false);
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                      }}
-                    >
-                      {item}
-                    </Link>
-                  );
-                }
-                if (item === 'Portfolio') {
-                  return (
-                    <Link
-                      key={item}
-                      to="/portfolio"
-                      className="text-xl font-bold text-white uppercase tracking-widest"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      {item}
-                    </Link>
-                  );
-                }
-                return (
-                  <Link
-                    key={item}
-                    to={`/#${item.toLowerCase()}`}
-                    className="text-xl font-bold text-white uppercase tracking-widest"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {item}
-                  </Link>
-                );
-              })}
+            <button className="absolute top-12 right-12 text-white text-sm font-black uppercase tracking-widest hover:opacity-50 transition-all" onClick={() => setIsMobileMenuOpen(false)}>CLOSE [X]</button>
+            <div className="flex flex-col space-y-12">
+              {['Home', 'Systems', 'About', 'Portfolio', 'Journal'].map((item) => (
+                <Link key={item} to={item === 'Home' ? '/' : (item === 'Portfolio' ? '/portfolio' : `/#${item.toLowerCase()}`)} onClick={() => setIsMobileMenuOpen(false)} className="text-5xl font-black text-white uppercase tracking-tighter hover:italic hover:translate-x-4 transition-all duration-500">
+                  {item}
+                </Link>
+              ))}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </nav>
+    </motion.nav>
   );
 };
 
@@ -673,6 +626,53 @@ const QuoteSection = () => {
   );
 };
 
+const AboutCompany = ({ data }) => {
+  if (!data) return null;
+  return (
+    <section id="about" className="py-32 px-6 bg-black relative overflow-hidden">
+      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-24 items-center mb-32">
+        <div className="w-full lg:w-1/2">
+          <Reveal>
+            <span className="text-[10px] font-black uppercase tracking-[0.5em] text-white/30 mb-8 block italic">WHO WE ARE</span>
+            <h2 className="text-4xl md:text-6xl font-black uppercase mb-12 tracking-tight leading-[1.1]">{data.title || "Our Story"}</h2>
+          </Reveal>
+          <Reveal delay={0.2}>
+            <p className="text-white/60 text-lg md:text-xl leading-relaxed mb-10 font-light whitespace-pre-wrap">{data.description || "Incorporate at the core of digital evolution."}</p>
+          </Reveal>
+          <div className="grid grid-cols-2 gap-10">
+            <div>
+              <h4 className="text-white/20 text-[10px] font-black uppercase tracking-widest mb-4 italic">MISSION</h4>
+              <p className="text-white/50 text-sm leading-relaxed">{data.mission || "Build the future today."}</p>
+            </div>
+          </div>
+        </div>
+        <div className="w-full lg:w-1/2 relative group">
+          <div className="absolute inset-0 bg-white/5 blur-3xl rounded-full scale-75 opacity-20 pointer-events-none group-hover:scale-90 transition-transform duration-1000" />
+          <div className="aspect-[4/5] rounded-[3rem] overflow-hidden border border-white/5 hover:border-white/10 transition-all duration-700">
+            <img src={data.image || "https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80"} className="w-full h-full object-cover grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000 scale-105 group-hover:scale-110" alt="" />
+          </div>
+        </div>
+      </div>
+
+      {/* Team Section */}
+      <div className="max-w-7xl mx-auto">
+        <h3 className="text-2xl font-black uppercase tracking-[0.3em] mb-20 text-center opacity-40">The Architects</h3>
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
+          {data.team?.map((member, i) => (
+            <div key={i} className="group hover:-translate-y-4 transition-all duration-700">
+              <div className="aspect-[3/4] rounded-3xl overflow-hidden mb-8 border border-white/5 group-hover:border-white/20 transition-all duration-700">
+                <img src={member.image || "/avatar.png"} className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" alt="" />
+              </div>
+              <h4 className="font-black uppercase tracking-tight text-xl mb-1 group-hover:translate-x-2 transition-transform duration-500">{member.name}</h4>
+              <p className="text-white/20 text-[10px] font-black uppercase tracking-[0.4em] transform group-hover:translate-x-2 transition-transform duration-700 delay-100">{member.role}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const CTA = () => (
   <section id="contact" className="py-24 px-6 bg-black overflow-hidden relative transition-colors duration-500 border-t border-white/5">
     <div className="max-w-7xl mx-auto relative z-10 text-center flex flex-col items-center justify-center gap-12">
@@ -695,7 +695,7 @@ const CTA = () => (
   </section>
 );
 
-const Footer = () => (
+const Footer = ({ data }) => (
   <footer id="footer" className="bg-black text-white py-24 px-6 border-t border-white/10 transition-colors duration-500 relative overflow-hidden">
     <div className="max-w-7xl mx-auto relative z-10">
       <div className="grid md:grid-cols-2 lg:grid-cols-12 gap-12 mb-16 items-start">
@@ -707,6 +707,16 @@ const Footer = () => (
           <p className="text-white/50 max-w-md mb-10 text-base md:text-lg leading-relaxed font-light">
             Superior software engineering firm specializing in complex system architectures and intelligent product development. We bridge the gap between imagination and digital reality.
           </p>
+          <div className="space-y-4 mb-10">
+            <div className="flex items-center gap-4 text-white/40 hover:text-white transition-colors uppercase tracking-[0.2em] text-[10px] font-black group">
+              <div className="w-8 h-[1px] bg-white/10 group-hover:w-12 transition-all"></div>
+              {data?.email || "admin@incodex.com"}
+            </div>
+            <div className="flex items-center gap-4 text-white/40 hover:text-white transition-colors uppercase tracking-[0.2em] text-[10px] font-black group">
+              <div className="w-8 h-[1px] bg-white/10 group-hover:w-12 transition-all"></div>
+              {data?.phone || "+880 1234 567 890"}
+            </div>
+          </div>
           <div className="flex space-x-6">
             {[Twitter, Linkedin, Github].map((Icon, i) => (
               <button key={i} className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-white hover:text-black hover:border-white transition-all duration-500 group">
@@ -1079,8 +1089,14 @@ const BlogDetail = () => {
 
 const AppContents = () => {
   const location = useLocation();
+  const [aboutData, setAboutData] = useState(null);
+  const [settingsData, setSettingsData] = useState(null);
 
   useEffect(() => {
+    // Fetch global company data
+    axios.get(`${API_URL}/about`).then(res => setAboutData(res.data));
+    axios.get(`${API_URL}/settings`).then(res => setSettingsData(res.data));
+
     if (location.hash) {
       const el = document.getElementById(location.hash.substring(1));
       if (el) el.scrollIntoView({ behavior: 'smooth' });
@@ -1100,6 +1116,7 @@ const AppContents = () => {
             <Hero />
             <ProgressInfo />
             <Features />
+            <AboutCompany data={aboutData} />
             <QuoteSection />
             <ServicesInfo />
             <Testimonials />
@@ -1111,7 +1128,7 @@ const AppContents = () => {
         <Route path="/blog/:slug" element={<BlogDetail />} />
         <Route path="/admin" element={<Admin />} />
       </Routes>
-      {!location.pathname.startsWith('/admin') && <Footer />}
+      {!location.pathname.startsWith('/admin') && <Footer data={settingsData} />}
     </div>
   );
 };

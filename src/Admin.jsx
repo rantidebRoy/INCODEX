@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { Trash, Check, Plus, LogOut, ChevronRight, MessageSquare, BookOpen, Eye, Edit3 } from 'lucide-react';
+import { Trash, Check, Plus, LogOut, ChevronRight, MessageSquare, BookOpen, Eye, Edit3, Image as ImageIcon, Users, Settings as SettingsIcon, Mail, Phone, MapPin, Globe, Share2 } from 'lucide-react';
 
 const API_URL = 'http://localhost:5000/api';
 
@@ -21,6 +21,12 @@ const Admin = () => {
     const [blogForm, setBlogForm] = useState({ title: '', slug: '', excerpt: '', content: '', image: '' });
     const [editingId, setEditingId] = useState(null);
 
+    // Profile & Settings State
+    const [aboutInfo, setAboutInfo] = useState({ title: '', description: '', mission: '', image: '', team: [] });
+    const [settingsInfo, setSettingsInfo] = useState({ email: '', notificationEmail: '', phone: '', address: '', socials: { facebook: '', twitter: '', linkedin: '', github: '' } });
+    const [newTeamMember, setNewTeamMember] = useState({ name: '', role: '', image: '', bio: '' });
+    const [uploading, setUploading] = useState(false);
+
     useEffect(() => {
         if (token) {
             setIsLoggedIn(true);
@@ -38,6 +44,12 @@ const Admin = () => {
             } else if (activeTab === 'blogs') {
                 const res = await axios.get(`${API_URL}/blogs`, config);
                 setBlogs(res.data);
+            } else if (activeTab === 'profile') {
+                const res = await axios.get(`${API_URL}/about`, config);
+                setAboutInfo(res.data);
+            } else if (activeTab === 'settings') {
+                const res = await axios.get(`${API_URL}/settings`, config);
+                setSettingsInfo(res.data);
             }
         } catch (err) {
             console.error(err);
@@ -128,6 +140,62 @@ const Admin = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
+    const handleUploadImage = async (file, type, index = null) => {
+        if (!file) return;
+        setUploading(true);
+        const formData = new FormData();
+        formData.append('image', file);
+        try {
+            const config = { headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${token}` } };
+            const res = await axios.post(`${API_URL}/upload/image`, formData, config);
+            const url = res.data.url;
+
+            if (type === 'blog') setBlogForm({ ...blogForm, image: url });
+            if (type === 'about') setAboutInfo({ ...aboutInfo, image: url });
+            if (type === 'team_new') setNewTeamMember({ ...newTeamMember, image: url });
+            if (type === 'team_edit' && index !== null) {
+                const updatedTeam = [...aboutInfo.team];
+                updatedTeam[index].image = url;
+                setAboutInfo({ ...aboutInfo, team: updatedTeam });
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Upload failed. Check Cloudinary credentials in .env');
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const handleSaveProfile = async () => {
+        try {
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            await axios.post(`${API_URL}/about/update`, aboutInfo, config);
+            alert('Profile updated successfully');
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const handleSaveSettings = async () => {
+        try {
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            await axios.post(`${API_URL}/settings/update`, settingsInfo, config);
+            alert('Settings updated successfully');
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const handleAddTeamMember = () => {
+        setAboutInfo({ ...aboutInfo, team: [...aboutInfo.team, newTeamMember] });
+        setNewTeamMember({ name: '', role: '', image: '', bio: '' });
+    };
+
+    const handleRemoveTeamMember = (index) => {
+        const updatedTeam = aboutInfo.team.filter((_, i) => i !== index);
+        setAboutInfo({ ...aboutInfo, team: updatedTeam });
+    };
+
     const cancelEdit = () => {
         setEditingId(null);
         setBlogForm({ title: '', slug: '', excerpt: '', content: '', image: '' });
@@ -207,6 +275,18 @@ const Admin = () => {
                     >
                         <BookOpen size={16} /> Journal
                     </button>
+                    <button
+                        onClick={() => setActiveTab('profile')}
+                        className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] transition-all ${activeTab === 'profile' ? 'text-white border-b-2 border-white pb-2' : 'text-white/20 hover:text-white/40 pb-2'}`}
+                    >
+                        <Users size={16} /> Company Profile
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('settings')}
+                        className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] transition-all ${activeTab === 'settings' ? 'text-white border-b-2 border-white pb-2' : 'text-white/20 hover:text-white/40 pb-2'}`}
+                    >
+                        <SettingsIcon size={16} /> Settings
+                    </button>
                 </div>
 
                 {activeTab === 'quotes' && (
@@ -266,6 +346,18 @@ const Admin = () => {
                             <div className="sticky top-32 bg-neutral-900/50 border border-white/10 rounded-3xl p-8">
                                 <h2 className="text-xl font-black uppercase tracking-widest mb-8">{editingId ? 'Edit Journal' : 'Publish New'}</h2>
                                 <form className="space-y-5" onSubmit={handleAddBlog}>
+                                    <div className="space-y-2">
+                                        <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/30 ml-2">Cover Image</label>
+                                        <div className="flex gap-4 items-center">
+                                            {blogForm.image && (
+                                                <img src={blogForm.image} className="w-12 h-12 rounded-lg object-cover border border-white/10" alt="Preview" />
+                                            )}
+                                            <label className="flex-grow cursor-pointer bg-black border border-white/10 rounded-xl px-4 py-3 text-xs text-white/40 hover:text-white transition-all flex items-center justify-center gap-2">
+                                                <ImageIcon size={14} /> {uploading ? 'Uploading...' : 'Upload to Cloudinary'}
+                                                <input type="file" className="hidden" onChange={(e) => handleUploadImage(e.target.files[0], 'blog')} />
+                                            </label>
+                                        </div>
+                                    </div>
                                     <div className="space-y-2">
                                         <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/30 ml-2">Blog Title</label>
                                         <input
@@ -331,7 +423,11 @@ const Admin = () => {
                                     className="bg-neutral-950 border border-white/10 rounded-3xl p-6 group hover:border-white/20 transition-all flex gap-6 items-center"
                                 >
                                     <div className="w-24 h-24 rounded-2xl bg-white/5 border border-white/10 overflow-hidden hidden md:block">
-                                        {/* No image handler for simplicity in demo */}
+                                        {blog.image ? (
+                                            <img src={blog.image} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" alt="" />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-white/5"><ImageIcon size={24} /></div>
+                                        )}
                                     </div>
                                     <div className="flex-grow">
                                         <h4 className="text-lg font-black uppercase tracking-tight mb-1">{blog.title}</h4>
@@ -366,6 +462,107 @@ const Admin = () => {
                                 </div>
                             ))}
                         </div>
+                    </div>
+                )}
+
+                {activeTab === 'profile' && (
+                    <div className="grid lg:grid-cols-3 gap-10">
+                        <div className="lg:col-span-1 space-y-8">
+                            <div className="bg-neutral-900/50 border border-white/10 rounded-3xl p-8">
+                                <h2 className="text-xl font-black uppercase tracking-widest mb-8">Brand Story</h2>
+                                <div className="space-y-5">
+                                    <div className="space-y-2">
+                                        <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/30 ml-2">Hero Image</label>
+                                        <div className="flex gap-4 items-center">
+                                            {aboutInfo.image && <img src={aboutInfo.image} className="w-12 h-12 rounded-lg object-cover" alt="" />}
+                                            <label className="flex-grow cursor-pointer bg-black border border-white/10 rounded-xl px-4 py-3 text-xs text-center">
+                                                {uploading ? '...' : 'Upload Image'}
+                                                <input type="file" className="hidden" onChange={(e) => handleUploadImage(e.target.files[0], 'about')} />
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <input placeholder="Title" className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm" value={aboutInfo.title} onChange={e => setAboutInfo({ ...aboutInfo, title: e.target.value })} />
+                                    <textarea placeholder="Mission Statement" rows="3" className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm resize-none" value={aboutInfo.mission} onChange={e => setAboutInfo({ ...aboutInfo, mission: e.target.value })} />
+                                    <textarea placeholder="Full Description" rows="6" className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm resize-none" value={aboutInfo.description} onChange={e => setAboutInfo({ ...aboutInfo, description: e.target.value })} />
+                                    <button onClick={handleSaveProfile} className="w-full py-4 bg-white text-black font-black uppercase tracking-widest rounded-xl">Update Profile</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="lg:col-span-2 space-y-6">
+                            <div className="bg-neutral-900/50 border border-white/10 rounded-3xl p-8 mb-6">
+                                <h2 className="text-xl font-black uppercase tracking-widest mb-8">Add Team Member</h2>
+                                <div className="grid md:grid-cols-2 gap-4 mb-4">
+                                    <input placeholder="Name" className="bg-black border border-white/10 rounded-xl px-4 py-3 text-sm" value={newTeamMember.name} onChange={e => setNewTeamMember({ ...newTeamMember, name: e.target.value })} />
+                                    <input placeholder="Role" className="bg-black border border-white/10 rounded-xl px-4 py-3 text-sm" value={newTeamMember.role} onChange={e => setNewTeamMember({ ...newTeamMember, role: e.target.value })} />
+                                </div>
+                                <div className="flex gap-4 items-center mb-4">
+                                    <label className="flex-grow cursor-pointer bg-black border border-white/10 rounded-xl px-4 py-3 text-xs text-center">
+                                        {uploading ? 'Uploading...' : 'Upload Member Photo'}
+                                        <input type="file" className="hidden" onChange={(e) => handleUploadImage(e.target.files[0], 'team_new')} />
+                                    </label>
+                                    <button onClick={handleAddTeamMember} className="px-8 py-3 bg-white text-black font-black uppercase tracking-widest rounded-xl flex items-center gap-2"><Plus size={16} /> Add</button>
+                                </div>
+                            </div>
+
+                            <div className="grid md:grid-cols-2 gap-6">
+                                {aboutInfo.team?.map((member, i) => (
+                                    <div key={i} className="bg-neutral-950 border border-white/10 rounded-3xl p-6 flex gap-4 items-center">
+                                        <img src={member.image || '/avatar.png'} className="w-16 h-16 rounded-2xl object-cover grayscale" alt="" />
+                                        <div className="flex-grow">
+                                            <h4 className="font-black uppercase tracking-tight">{member.name}</h4>
+                                            <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest">{member.role}</p>
+                                        </div>
+                                        <button onClick={() => handleRemoveTeamMember(i)} className="text-red-500/20 hover:text-red-500 transition-all"><Trash size={16} /></button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {activeTab === 'settings' && (
+                    <div className="max-w-4xl mx-auto space-y-10">
+                        <div className="grid md:grid-cols-2 gap-10">
+                            <div className="bg-neutral-950 border border-white/10 rounded-3xl p-10">
+                                <h3 className="text-sm font-black uppercase tracking-[0.3em] mb-10 flex items-center gap-2">
+                                    <Mail size={16} className="text-white/20" /> Contact Signals
+                                </h3>
+                                <div className="space-y-6">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-white/20 ml-2">Public Contact Email</label>
+                                        <input className="w-full bg-black border border-white/10 rounded-xl px-5 py-4 text-sm" value={settingsInfo.email} onChange={e => setSettingsInfo({ ...settingsInfo, email: e.target.value })} />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-white/20 ml-2">Notification Email (Hidden)</label>
+                                        <input className="w-full bg-black border border-white/10 rounded-xl px-5 py-4 text-sm font-mono" value={settingsInfo.notificationEmail} onChange={e => setSettingsInfo({ ...settingsInfo, notificationEmail: e.target.value })} />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-white/20 ml-2">Office Phone</label>
+                                        <input className="w-full bg-black border border-white/10 rounded-xl px-5 py-4 text-sm" value={settingsInfo.phone} onChange={e => setSettingsInfo({ ...settingsInfo, phone: e.target.value })} />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-white/20 ml-2">Headquarters</label>
+                                        <input className="w-full bg-black border border-white/10 rounded-xl px-5 py-4 text-sm" value={settingsInfo.address} onChange={e => setSettingsInfo({ ...settingsInfo, address: e.target.value })} />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="bg-neutral-950 border border-white/10 rounded-3xl p-10">
+                                <h3 className="text-sm font-black uppercase tracking-[0.3em] mb-10 flex items-center gap-2">
+                                    <Share2 size={16} className="text-white/20" /> Social Presence
+                                </h3>
+                                <div className="space-y-6">
+                                    {['facebook', 'twitter', 'linkedin', 'github'].map(key => (
+                                        <div key={key} className="space-y-2">
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-white/20 ml-2">{key} URL</label>
+                                            <input className="w-full bg-black border border-white/10 rounded-xl px-5 py-4 text-sm" value={settingsInfo.socials[key]} onChange={e => setSettingsInfo({ ...settingsInfo, socials: { ...settingsInfo.socials, [key]: e.target.value } })} />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                        <button onClick={handleSaveSettings} className="w-full py-6 bg-white text-black font-black uppercase tracking-[0.3em] rounded-2xl hover:bg-neutral-200 transition-all">Synchronize Global Settings</button>
                     </div>
                 )}
             </div>
