@@ -10,6 +10,10 @@ import {
 } from 'react-router-dom';
 import { Menu, X, ArrowRight, Shield, Zap, Globe, Layout, ChevronRight, Github, Twitter, Linkedin, Sun, Moon, Link as LinkIcon, ShoppingCart, Quote, User } from 'lucide-react';
 import Portfolio from './Portfolio';
+import Admin from './Admin';
+import axios from 'axios';
+
+const API_URL = 'http://localhost:5000/api';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -529,6 +533,24 @@ const QuoteSection = () => {
     return acc + (service ? service.price : 0);
   }, 0);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const payload = {
+        ...formData,
+        selectedServices: selectedServices.map(id => services.find(s => s.id === id).name),
+        totalCost
+      };
+      await axios.post(`${API_URL}/quotes/submit`, payload);
+      alert('Quote request sent successfully! We will contact you soon.');
+      setFormData({ firstName: '', lastName: '', email: '', subject: '', message: '' });
+      setSelectedServices([]);
+    } catch (err) {
+      console.error(err);
+      alert('Error sending quote request. Please try again.');
+    }
+  };
+
   return (
     <section id="quote" className="py-32 px-6 bg-black border-t border-white/5 relative overflow-hidden">
       {/* Background decoration */}
@@ -551,7 +573,7 @@ const QuoteSection = () => {
           </motion.p>
         </div>
 
-        <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
+        <form className="space-y-8" onSubmit={handleSubmit}>
           <div className="grid md:grid-cols-2 gap-8">
             <div className="space-y-3">
               <label className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 ml-4">First Name</label>
@@ -875,29 +897,22 @@ const Testimonials = () => {
 };
 
 const Blog = () => {
-  const posts = [
-    {
-      title: "The Importance of Website Maintenance",
-      slug: "website-maintenance",
-      image: "/blogs/blog1.jpg",
-      date: "October 1, 2024",
-      excerpt: "Launching a website is just the beginning; ongoing maintenance is crucial to ensure its continued success. Regular website maintenance involves updating content, monitoring performance, and addressing technical issues to provide…"
-    },
-    {
-      title: "Harnessing the Power of Cloud Computing",
-      slug: "cloud-computing",
-      image: "/blogs/blog2.jpg",
-      date: "September 28, 2024",
-      excerpt: "Cloud computing has revolutionized the way we store, manage, and access data. By providing on-demand computing resources over the internet, it offers numerous benefits that cater to the needs of modern businesses."
-    },
-    {
-      title: "The Importance of Machine Learning in Today's World",
-      slug: "machine-learning",
-      image: "/blogs/blog3.jpg",
-      date: "August 2, 2024",
-      excerpt: "Machine learning, a subset of artificial intelligence, has become a game-changer in various industries. It involves training algorithms to learn from data, enabling systems to make predictions and decisions without…"
-    }
-  ];
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/blogs`);
+        setPosts(res.data);
+      } catch (err) {
+        console.error('Error fetching blogs:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPosts();
+  }, []);
 
   return (
     <section id="blog" className="py-32 px-6 bg-black border-t border-white/5 relative overflow-hidden">
@@ -915,7 +930,11 @@ const Blog = () => {
         </div>
 
         <div className="grid md:grid-cols-3 gap-12">
-          {posts.map((post, i) => (
+          {loading ? (
+            <div className="col-span-3 text-center py-20 opacity-20 uppercase font-black tracking-widest">Accessing Journal Archive...</div>
+          ) : posts.length === 0 ? (
+            <div className="col-span-3 text-center py-20 opacity-20 uppercase font-black tracking-widest">No entries found.</div>
+          ) : posts.map((post, i) => (
             <Link key={i} to={`/blog/${post.slug}`} className="block group">
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
@@ -957,39 +976,33 @@ const BlogDetail = () => {
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(true);
 
-  const blogSlugs = ['website-maintenance', 'cloud-computing', 'machine-learning'];
-  const blogData = {
-    'website-maintenance': {
-      title: "The Importance of Website Maintenance",
-      date: "October 1, 2024",
-      image: "/blogs/blog1.jpg"
-    },
-    'cloud-computing': {
-      title: "Harnessing the Power of Cloud Computing",
-      date: "September 28, 2024",
-      image: "/blogs/blog2.jpg"
-    },
-    'machine-learning': {
-      title: "The Importance of Machine Learning in Today's World",
-      date: "August 2, 2024",
-      image: "/blogs/blog3.jpg"
-    }
-  };
+  const [blogSlugs, setBlogSlugs] = useState([]);
+  const [blog, setBlog] = useState(null);
+
+  useEffect(() => {
+    const fetchSlugs = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/blogs`);
+        setBlogSlugs(res.data.map(b => b.slug));
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchSlugs();
+  }, []);
 
   const currentIndex = blogSlugs.indexOf(slug);
   const prevSlug = currentIndex > 0 ? blogSlugs[currentIndex - 1] : null;
   const nextSlug = currentIndex < blogSlugs.length - 1 ? blogSlugs[currentIndex + 1] : null;
 
-  const blog = blogData[slug];
-
   useEffect(() => {
     window.scrollTo(0, 0);
     setLoading(true);
     if (slug) {
-      fetch(`/blogs/${slug}.txt`)
-        .then(res => res.text())
-        .then(text => {
-          setContent(text);
+      axios.get(`${API_URL}/blogs/${slug}`)
+        .then(res => {
+          setBlog(res.data);
+          setContent(res.data.content);
           setLoading(false);
         })
         .catch(err => {
@@ -1045,7 +1058,7 @@ const BlogDetail = () => {
               {prevSlug && (
                 <Link to={`/blog/${prevSlug}`} className="group block text-left">
                   <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/20 mb-4 block group-hover:text-white/40 transition-colors italic">PREVIOUS STORY</span>
-                  <h4 className="text-lg font-black text-white uppercase tracking-tight group-hover:translate-x-[-10px] transition-transform duration-500">{blogData[prevSlug].title}</h4>
+                  <h4 className="text-lg font-black text-white uppercase tracking-tight group-hover:translate-x-[-10px] transition-transform duration-500">{prevSlug}</h4>
                 </Link>
               )}
             </div>
@@ -1053,7 +1066,7 @@ const BlogDetail = () => {
               {nextSlug && (
                 <Link to={`/blog/${nextSlug}`} className="group block text-right">
                   <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/20 mb-4 block group-hover:text-white/40 transition-colors italic">NEXT STORY</span>
-                  <h4 className="text-lg font-black text-white uppercase tracking-tight group-hover:translate-x-[10px] transition-transform duration-500">{blogData[nextSlug].title}</h4>
+                  <h4 className="text-lg font-black text-white uppercase tracking-tight group-hover:translate-x-[10px] transition-transform duration-500">{nextSlug}</h4>
                 </Link>
               )}
             </div>
@@ -1080,7 +1093,7 @@ const AppContents = () => {
 
   return (
     <div className="bg-black min-h-screen font-sans selection:bg-white selection:text-black transition-colors duration-500">
-      <Navbar />
+      {!location.pathname.startsWith('/admin') && <Navbar />}
       <Routes>
         <Route path="/" element={
           <>
@@ -1096,8 +1109,9 @@ const AppContents = () => {
         } />
         <Route path="/portfolio" element={<Portfolio Reveal={Reveal} />} />
         <Route path="/blog/:slug" element={<BlogDetail />} />
+        <Route path="/admin" element={<Admin />} />
       </Routes>
-      <Footer />
+      {!location.pathname.startsWith('/admin') && <Footer />}
     </div>
   );
 };
