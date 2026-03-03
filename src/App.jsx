@@ -244,7 +244,7 @@ const Hero = () => {
   );
 };
 
-const ProgressInfo = () => {
+const ProgressInfo = ({ packages }) => {
   return (
     <section className="py-32 px-6 bg-black text-white transition-colors duration-500 overflow-hidden relative">
       <div className="max-w-7xl mx-auto relative z-10 text-center">
@@ -275,60 +275,37 @@ const ProgressInfo = () => {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-10 max-w-6xl mx-auto mt-20">
-          {/* Package 1 */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            whileHover={{ y: -10 }}
-            className="p-12 border border-white/10 bg-neutral-950 text-left relative group overflow-hidden flex flex-col h-full"
-          >
-            <div className="absolute top-0 left-0 w-1 h-0 bg-white group-hover:h-full transition-all duration-700" />
-            <div className="absolute top-0 right-0 w-1 h-0 bg-white/20 group-hover:h-full transition-all duration-700 delay-100" />
-            <h3 className="text-3xl font-black mb-2 tracking-tight uppercase">FIFTY SHADES OF WEBSITE</h3>
-            <p className="text-2xl font-light text-white/30 mb-10 tracking-tight">$157 – $900</p>
-            <ul className="space-y-5 mb-12 flex-grow">
-              {['E-commerce', 'Portfolio', 'Personal Blogs', 'News Portal', 'Organisations', 'Travel Agency', 'Fundraising'].map((item) => (
-                <li key={item} className="flex items-center text-white/60 font-light text-sm tracking-wide">
-                  <span className="w-1.5 h-1.5 bg-white mr-4 rounded-none opacity-30 group-hover:opacity-100 transition-opacity" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-            <button className="w-full py-5 border border-white text-white font-black hover:bg-white hover:text-black transition-all duration-300 uppercase tracking-[0.2em] text-xs">
-              Order Now
-            </button>
-          </motion.div>
-
-          {/* Package 2 */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            whileHover={{ y: -10 }}
-            className="p-12 border border-white/10 bg-neutral-950 text-left relative group overflow-hidden flex flex-col h-full"
-          >
-            <div className="absolute top-0 left-0 w-1 h-0 bg-white group-hover:h-full transition-all duration-700" />
-            <div className="absolute top-0 right-0 w-1 h-0 bg-white/20 group-hover:h-full transition-all duration-700 delay-100" />
-            <h3 className="text-3xl font-black mb-2 tracking-tight uppercase">INNOVATIVE GRAPHICS & SEO</h3>
-            <p className="text-2xl font-light text-white/30 mb-10 tracking-tight">$17 – $500</p>
-            <ul className="space-y-5 mb-12 flex-grow">
-              {['Logo Design', 'Banner Design', 'Vector Illustrations', 'UI/UX Design', 'On-Page SEO', 'Off-Page SEO'].map((item) => (
-                <li key={item} className="flex items-center text-white/60 font-light text-sm tracking-wide">
-                  <span className="w-1.5 h-1.5 bg-white mr-4 rounded-none opacity-30 group-hover:opacity-100 transition-opacity" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-            <button className="w-full py-5 border border-white text-white font-black hover:bg-white hover:text-black transition-all duration-300 uppercase tracking-[0.2em] text-xs">
-              Contact Now
-            </button>
-          </motion.div>
+          {packages?.length > 0 ? packages.map((pkg, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: idx * 0.1 }}
+              whileHover={{ y: -10 }}
+              className="p-12 border border-white/10 bg-neutral-950 text-left relative group overflow-hidden flex flex-col h-full"
+            >
+              <div className="absolute top-0 left-0 w-1 h-0 bg-white group-hover:h-full transition-all duration-700" />
+              <div className="absolute top-0 right-0 w-1 h-0 bg-white/20 group-hover:h-full transition-all duration-700 delay-100" />
+              <h3 className="text-3xl font-black mb-2 tracking-tight uppercase">{pkg.title}</h3>
+              <p className="text-2xl font-light text-white/30 mb-10 tracking-tight">{pkg.priceRange}</p>
+              <ul className="space-y-5 mb-12 flex-grow">
+                {pkg.items?.map((item, i) => (
+                  <li key={i} className="flex items-center text-white/60 font-light text-sm tracking-wide">
+                    <span className="w-1.5 h-1.5 bg-white mr-4 rounded-none opacity-30 group-hover:opacity-100 transition-opacity" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <button className="w-full py-5 border border-white text-white font-black hover:bg-white hover:text-black transition-all duration-300 uppercase tracking-[0.2em] text-xs">
+                Order Now
+              </button>
+            </motion.div>
+          )) : (
+            <div className="lg:col-span-2 py-20 text-white/10 font-black uppercase tracking-[1em]">Establishing Data Link...</div>
+          )}
         </div>
       </div>
-
     </section>
   );
 };
@@ -376,34 +353,18 @@ const FeatureCard = ({ icon: Icon, title, description }) => (
   </motion.div>
 );
 
-const Features = () => {
-  const features = [
-    {
-      icon: Layout,
-      title: "WEB DESIGN AND DEVELOPMENT",
-      description: "Crafting immersive digital experiences with cutting-edge technologies. From responsive interfaces to complex backend systems, we build for performance and scale."
-    },
-    {
-      icon: Globe,
-      title: "SEO OPTIMISATION & MARKETING",
-      description: "Driving growth through data-backed strategies. We optimize your digital presence to ensure your brand reaches the right audience at the perfect moment."
-    },
-    {
-      icon: Zap,
-      title: "GRAPHICS DESIGN",
-      description: "Visual storytelling that resonates. Our design philosophy combines minimalist aesthetics with powerful brand identity to make your vision unforgettable."
-    },
-    {
-      icon: LinkIcon,
-      title: "BACKLINK BUILDING",
-      description: "Strengthening your domain authority through high-quality backlink strategies. We focus on ethical, high-impact link acquisition to boost your search rankings."
-    },
-    {
-      icon: ShoppingCart,
-      title: "E-COMMERCE SOLUTION",
-      description: "Building scalable online stores that convert. From seamless checkout experiences to inventory management, we create shops that drive revenue."
-    }
-  ];
+const Features = ({ items }) => {
+  const iconMap = {
+    Layout: Layout,
+    Globe: Globe,
+    Zap: Zap,
+    LinkIcon: LinkIcon,
+    ShoppingCart: ShoppingCart,
+    Monitor: Monitor,
+    Smartphone: Smartphone,
+    Code: Shield, // Fallback to shield for code
+    Search: Shield // Fallback
+  };
 
   return (
     <section id="about" className="py-32 px-6 bg-black border-t border-white/5 relative overflow-hidden">
@@ -421,33 +382,37 @@ const Features = () => {
         </div>
 
         <div className="flex flex-wrap justify-center gap-6">
-          {features.map((f, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.6 }}
-              whileHover={{ y: -10 }}
-              className="group p-10 border border-white/10 hover:border-white transition-all duration-500 bg-neutral-950 flex flex-col relative w-full md:w-[45%] lg:w-[30%] min-h-[400px] flex-grow-0 flex-shrink-0"
-            >
-              {/* Corner decor */}
-              <div className="absolute top-0 right-0 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="absolute top-4 right-4 w-4 h-[1px] bg-white" />
-                <div className="absolute top-4 right-4 h-4 w-[1px] bg-white" />
-              </div>
+          {items?.length > 0 ? items.map((f, i) => {
+            const Icon = iconMap[f.icon] || Layout;
+            return (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, duration: 0.6 }}
+                whileHover={{ y: -10 }}
+                className="group p-10 border border-white/10 hover:border-white transition-all duration-500 bg-neutral-950 flex flex-col relative w-full md:w-[45%] lg:w-[30%] min-h-[400px] flex-grow-0 flex-shrink-0"
+              >
+                <div className="absolute top-0 right-0 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute top-4 right-4 w-4 h-[1px] bg-white" />
+                  <div className="absolute top-4 right-4 h-4 w-[1px] bg-white" />
+                </div>
 
-              <div className="w-12 h-12 text-white mb-8 group-hover:scale-110 transition-transform duration-500">
-                <f.icon size={40} strokeWidth={1.5} />
-              </div>
-              <h3 className="text-xl font-black text-white mb-6 leading-tight tracking-widest uppercase">
-                {f.title}
-              </h3>
-              <p className="text-white/40 leading-relaxed font-light group-hover:text-white/70 transition-colors flex-grow">
-                {f.description}
-              </p>
-            </motion.div>
-          ))}
+                <div className="w-12 h-12 text-white mb-8 group-hover:scale-110 transition-transform duration-500">
+                  <Icon size={40} strokeWidth={1.5} />
+                </div>
+                <h3 className="text-xl font-black text-white mb-6 leading-tight tracking-widest uppercase">
+                  {f.title}
+                </h3>
+                <p className="text-white/40 leading-relaxed font-light group-hover:text-white/70 transition-colors flex-grow">
+                  {f.description}
+                </p>
+              </motion.div>
+            );
+          }) : (
+            <div className="text-white/10 font-black tracking-[1em] py-20 uppercase">Intelligence Not Found</div>
+          )}
         </div>
       </div>
     </section>
@@ -825,7 +790,13 @@ const Testimonials = () => {
                   </div>
                   <p className="text-xl font-light text-white/50 mb-8 italic leading-relaxed">"{review.comment}"</p>
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[10px] font-black text-white">{review.name[0]}</div>
+                    <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 overflow-hidden flex items-center justify-center text-[10px] font-black text-white">
+                      {review.image ? (
+                        <img src={review.image} className="w-full h-full object-cover grayscale opacity-80" alt={review.name} />
+                      ) : (
+                        review.name[0]
+                      )}
+                    </div>
                     <h4 className="font-black text-white uppercase tracking-widest text-[10px]">— {review.name}</h4>
                   </div>
                 </motion.div>
@@ -1052,11 +1023,15 @@ const AppContents = () => {
   const location = useLocation();
   const [aboutData, setAboutData] = useState(null);
   const [settingsData, setSettingsData] = useState(null);
+  const [servicesData, setServicesData] = useState([]);
+  const [expertiseData, setExpertiseData] = useState([]);
 
   useEffect(() => {
     // Fetch global company data
     axios.get(`${API_URL}/about`).then(res => setAboutData(res.data));
     axios.get(`${API_URL}/settings`).then(res => setSettingsData(res.data));
+    axios.get(`${API_URL}/services`).then(res => setServicesData(res.data));
+    axios.get(`${API_URL}/expertise`).then(res => setExpertiseData(res.data));
 
     if (location.hash) {
       const el = document.getElementById(location.hash.substring(1));
@@ -1075,8 +1050,8 @@ const AppContents = () => {
         <Route path="/" element={
           <>
             <Hero />
-            <ProgressInfo />
-            <Features />
+            <ProgressInfo packages={servicesData} />
+            <Features items={expertiseData} />
             <TeamSection data={aboutData} />
             <QuoteSection />
             <ServicesInfo />

@@ -32,6 +32,7 @@ const aboutRoutes = require('./routes/aboutRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
+const projectRoutes = require('./routes/projectRoutes');
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -41,6 +42,9 @@ app.use('/api/about', aboutRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/projects', projectRoutes);
+app.use('/api/services', require('./routes/serviceRoutes'));
+app.use('/api/expertise', require('./routes/expertiseRoutes'));
 
 // API Health Check
 app.get('/api', (req, res) => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { Trash, Check, Plus, LogOut, ChevronRight, MessageSquare, BookOpen, Eye, Edit3, Image as ImageIcon, Users, Settings as SettingsIcon, Mail, Phone, MapPin, Globe, Share2, Quote, Lock } from 'lucide-react';
+import { Trash, Check, Plus, LogOut, ChevronRight, MessageSquare, BookOpen, Eye, Edit3, Image as ImageIcon, Users, Settings as SettingsIcon, Mail, Phone, MapPin, Globe, Share2, Quote, Lock, Zap, DollarSign, Layout } from 'lucide-react';
 
 const getApiUrl = () => {
     let base = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -24,7 +24,14 @@ const Admin = () => {
     const [quotes, setQuotes] = useState([]);
     const [blogs, setBlogs] = useState([]);
     const [reviews, setReviews] = useState([]);
+    const [projects, setProjects] = useState([]);
+    const [expertise, setExpertise] = useState([]);
+    const [services, setServices] = useState([]);
     const [blogForm, setBlogForm] = useState({ title: '', slug: '', excerpt: '', content: '', image: '' });
+    const [projectForm, setProjectForm] = useState({ title: '', subtitle: '', description: '', url: '', category: '', image: '' });
+    const [expertiseForm, setExpertiseForm] = useState({ title: '', description: '', icon: 'Layout' });
+    const [serviceForm, setServiceForm] = useState({ title: '', priceRange: '', items: [] });
+    const [serviceItem, setServiceItem] = useState('');
     const [editingId, setEditingId] = useState(null);
 
     // Profile & Settings State
@@ -33,6 +40,7 @@ const Admin = () => {
     const [newTeamMember, setNewTeamMember] = useState({ name: '', role: '', image: '', bio: '' });
     const [passwordData, setPasswordData] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
     const [uploading, setUploading] = useState(false);
+    const [reviewPhotos, setReviewPhotos] = useState({}); // { reviewId: imageUrl }
 
     const Reveal = ({ children, delay = 0 }) => (
         <motion.div
@@ -68,6 +76,15 @@ const Admin = () => {
             } else if (activeTab === 'profile') {
                 const res = await axios.get(`${API_URL}/about`, config);
                 setAboutInfo(res.data);
+            } else if (activeTab === 'projects') {
+                const res = await axios.get(`${API_URL}/projects`, config);
+                setProjects(res.data);
+            } else if (activeTab === 'expertise') {
+                const res = await axios.get(`${API_URL}/expertise`, config);
+                setExpertise(res.data);
+            } else if (activeTab === 'services') {
+                const res = await axios.get(`${API_URL}/services`, config);
+                setServices(res.data);
             } else if (activeTab === 'settings') {
                 const res = await axios.get(`${API_URL}/settings`, config);
                 const data = res.data;
@@ -159,6 +176,48 @@ const Admin = () => {
         }
     };
 
+    const handleAddProject = async (e) => {
+        e.preventDefault();
+        try {
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            if (editingId) {
+                await axios.patch(`${API_URL}/projects/${editingId}`, projectForm, config);
+                setEditingId(null);
+            } else {
+                await axios.post(`${API_URL}/projects/add`, projectForm, config);
+            }
+            setProjectForm({ title: '', subtitle: '', description: '', url: '', category: '', image: '' });
+            fetchData();
+        } catch (err) {
+            console.error(err);
+            alert('Error saving project.');
+        }
+    };
+
+    const handleEditProject = (project) => {
+        setEditingId(project._id);
+        setProjectForm({
+            title: project.title,
+            subtitle: project.subtitle || '',
+            description: project.description || '',
+            url: project.url || '',
+            category: project.category || '',
+            image: project.image || ''
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleDeleteProject = async (id) => {
+        if (!window.confirm('Delete this project?')) return;
+        try {
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            await axios.delete(`${API_URL}/projects/${id}`, config);
+            fetchData();
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     const handleEditBlog = (blog) => {
         setEditingId(blog._id);
         setBlogForm({
@@ -174,7 +233,11 @@ const Admin = () => {
     const handleUpdateReviewStatus = async (id, status) => {
         try {
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            await axios.patch(`${API_URL}/reviews/${id}/status`, { status }, config);
+            const payload = { status };
+            if (status === 'approved' && reviewPhotos[id]) {
+                payload.image = reviewPhotos[id];
+            }
+            await axios.patch(`${API_URL}/reviews/${id}/status`, payload, config);
             fetchData();
         } catch (err) {
             console.error(err);
@@ -203,12 +266,16 @@ const Admin = () => {
             const url = res.data.url;
 
             if (type === 'blog') setBlogForm({ ...blogForm, image: url });
+            if (type === 'project') setProjectForm({ ...projectForm, image: url });
             if (type === 'about') setAboutInfo({ ...aboutInfo, image: url });
             if (type === 'team_new') setNewTeamMember({ ...newTeamMember, image: url });
             if (type === 'team_edit' && index !== null) {
                 const updatedTeam = [...aboutInfo.team];
                 updatedTeam[index].image = url;
                 setAboutInfo({ ...aboutInfo, team: updatedTeam });
+            }
+            if (type === 'review_approval' && index) {
+                setReviewPhotos(prev => ({ ...prev, [index]: url }));
             }
         } catch (err) {
             console.error(err);
@@ -237,6 +304,23 @@ const Admin = () => {
             console.error(err);
             alert('Error updating settings');
         }
+    };
+
+    const handleSaveExpertise = async () => {
+        try {
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            // Simple bulk update for now as defined in routes
+            await axios.post(`${API_URL}/expertise/update`, expertise, config);
+            alert('Expertise updated');
+        } catch (err) { console.error(err); }
+    };
+
+    const handleSaveServices = async () => {
+        try {
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            await axios.post(`${API_URL}/services/update`, services, config);
+            alert('Services updated');
+        } catch (err) { console.error(err); }
     };
 
     const handlePasswordChange = async (e) => {
@@ -346,6 +430,9 @@ const Admin = () => {
                         <div className="hidden lg:flex items-center space-x-6">
                             <AdminNavLink active={activeTab === 'quotes'} onClick={() => setActiveTab('quotes')} icon={MessageSquare}>Quotes</AdminNavLink>
                             <AdminNavLink active={activeTab === 'blogs'} onClick={() => setActiveTab('blogs')} icon={BookOpen}>Journal</AdminNavLink>
+                            <AdminNavLink active={activeTab === 'projects'} onClick={() => setActiveTab('projects')} icon={Layout}>Portfolio</AdminNavLink>
+                            <AdminNavLink active={activeTab === 'expertise'} onClick={() => setActiveTab('expertise')} icon={Zap}>Expertise</AdminNavLink>
+                            <AdminNavLink active={activeTab === 'services'} onClick={() => setActiveTab('services')} icon={DollarSign}>Pricing</AdminNavLink>
                             <AdminNavLink active={activeTab === 'reviews'} onClick={() => setActiveTab('reviews')} icon={Quote}>Reviews</AdminNavLink>
                             <AdminNavLink active={activeTab === 'profile'} onClick={() => setActiveTab('profile')} icon={Users}>Team</AdminNavLink>
                             <AdminNavLink active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} icon={SettingsIcon}>Settings</AdminNavLink>
@@ -368,6 +455,9 @@ const Admin = () => {
                 {[
                     { id: 'quotes', icon: MessageSquare },
                     { id: 'blogs', icon: BookOpen },
+                    { id: 'projects', icon: Layout },
+                    { id: 'expertise', icon: Zap },
+                    { id: 'services', icon: DollarSign },
                     { id: 'reviews', icon: Quote },
                     { id: 'profile', icon: Users },
                     { id: 'settings', icon: SettingsIcon }
@@ -389,6 +479,9 @@ const Admin = () => {
                         <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tighter mb-4">
                             {activeTab === 'quotes' && 'Incoming Signals'}
                             {activeTab === 'blogs' && 'Journal Archive'}
+                            {activeTab === 'projects' && 'Portfolio Projects'}
+                            {activeTab === 'expertise' && 'Expertise & Intelligence'}
+                            {activeTab === 'services' && 'Pricing Structures'}
                             {activeTab === 'reviews' && 'Public Intelligence'}
                             {activeTab === 'profile' && 'Architect Registry'}
                             {activeTab === 'settings' && 'System Configuration'}
@@ -574,6 +667,188 @@ const Admin = () => {
                     </div>
                 )}
 
+                {activeTab === 'projects' && (
+                    <div className="grid lg:grid-cols-3 gap-10">
+                        <div className="lg:col-span-1">
+                            <div className="bg-neutral-900 sticky top-32 p-8 rounded-3xl border border-white/10">
+                                <h2 className="text-sm font-black uppercase tracking-[0.4em] mb-8 text-white/50">{editingId ? 'Edit Project' : 'New Project'}</h2>
+                                <form onSubmit={handleAddProject} className="space-y-6">
+                                    <div className="space-y-4">
+                                        <div className="aspect-[16/9] bg-black border border-white/5 rounded-2xl overflow-hidden relative group">
+                                            {projectForm.image ? (
+                                                <img src={projectForm.image} className="w-full h-full object-cover" alt="" />
+                                            ) : (
+                                                <div className="w-full h-full flex flex-col items-center justify-center text-white/10">
+                                                    <ImageIcon size={32} className="mb-2" />
+                                                    <span className="text-[8px] font-black uppercase tracking-widest">No Image</span>
+                                                </div>
+                                            )}
+                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center">
+                                                <label className="cursor-pointer bg-white text-black px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">
+                                                    {uploading ? 'Processing...' : 'Upload Image'}
+                                                    <input type="file" className="hidden" accept="image/*" onChange={(e) => handleUploadImage(e.target.files[0], 'project')} />
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/30 ml-2">Project Title</label>
+                                            <input className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm font-bold" value={projectForm.title} onChange={(e) => setProjectForm({ ...projectForm, title: e.target.value })} required />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/30 ml-2">Subtitle</label>
+                                            <input className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm" value={projectForm.subtitle} onChange={(e) => setProjectForm({ ...projectForm, subtitle: e.target.value })} />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/30 ml-2">Live URL</label>
+                                            <input className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm" value={projectForm.url} onChange={(e) => setProjectForm({ ...projectForm, url: e.target.value })} required />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/30 ml-2">Category</label>
+                                            <input className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm" value={projectForm.category} onChange={(e) => setProjectForm({ ...projectForm, category: e.target.value })} required />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/30 ml-2">Description</label>
+                                            <textarea rows="4" className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm resize-none" value={projectForm.description} onChange={(e) => setProjectForm({ ...projectForm, description: e.target.value })} required />
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-4">
+                                        <button className="flex-grow py-4 bg-white text-black font-black uppercase tracking-widest rounded-xl hover:bg-neutral-200 transition-all flex items-center justify-center gap-2">
+                                            {editingId ? <Check size={16} /> : <Plus size={16} />}
+                                            {editingId ? 'Update' : 'Add Project'}
+                                        </button>
+                                        {editingId && (
+                                            <button type="button" onClick={() => { setEditingId(null); setProjectForm({ title: '', subtitle: '', description: '', url: '', category: '', image: '' }); }} className="px-6 py-4 border border-white/10 text-white/40 uppercase font-black text-[10px] tracking-widest rounded-xl hover:text-white transition-all">Cancel</button>
+                                        )}
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div className="lg:col-span-2 grid gap-6">
+                            {projects.map((project) => (
+                                <div key={project._id} className="bg-neutral-950 border border-white/10 rounded-3xl p-6 group hover:border-white/20 transition-all flex gap-6 items-center">
+                                    <div className="w-32 h-20 rounded-xl bg-white/5 border border-white/10 overflow-hidden shrink-0">
+                                        <img src={project.image} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" alt="" />
+                                    </div>
+                                    <div className="flex-grow">
+                                        <h4 className="text-lg font-black uppercase tracking-tight mb-1">{project.title}</h4>
+                                        <p className="text-white/20 text-[9px] font-bold uppercase tracking-widest mb-3">{project.category} • {project.url}</p>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button onClick={() => handleEditProject(project)} className="w-10 h-10 rounded-full border border-white/5 flex items-center justify-center text-white/20 hover:text-white hover:border-white transition-all"><Edit3 size={16} /></button>
+                                        <button onClick={() => handleDeleteProject(project._id)} className="w-10 h-10 rounded-full border border-white/5 flex items-center justify-center text-white/20 hover:text-red-500 hover:border-red-500 transition-all"><Trash size={16} /></button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {activeTab === 'expertise' && (
+                    <div className="grid lg:grid-cols-3 gap-10">
+                        <div className="lg:col-span-1">
+                            <div className="bg-neutral-900 sticky top-32 p-8 rounded-3xl border border-white/10">
+                                <h2 className="text-sm font-black uppercase tracking-[0.4em] mb-8 text-white/50">Modify Intel</h2>
+                                <div className="space-y-6">
+                                    <div className="space-y-4">
+                                        <input placeholder="Service Title" className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm font-bold" value={expertiseForm.title} onChange={e => setExpertiseForm({ ...expertiseForm, title: e.target.value })} />
+                                        <select className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm text-white/40" value={expertiseForm.icon} onChange={e => setExpertiseForm({ ...expertiseForm, icon: e.target.value })}>
+                                            {['Layout', 'Globe', 'Zap', 'LinkIcon', 'ShoppingCart', 'Monitor', 'Smartphone', 'Code', 'Search'].map(icon => (
+                                                <option key={icon} value={icon}>{icon}</option>
+                                            ))}
+                                        </select>
+                                        <textarea placeholder="Description" rows="4" className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm resize-none" value={expertiseForm.description} onChange={e => setExpertiseForm({ ...expertiseForm, description: e.target.value })} />
+                                    </div>
+                                    <button
+                                        onClick={() => {
+                                            setExpertise([...expertise, expertiseForm]);
+                                            setExpertiseForm({ title: '', description: '', icon: 'Layout' });
+                                        }}
+                                        className="w-full py-4 bg-white text-black font-black uppercase tracking-widest rounded-xl hover:bg-neutral-200 transition-all flex items-center justify-center gap-2"
+                                    >
+                                        <Plus size={16} /> Stack Intel
+                                    </button>
+                                    <button onClick={handleSaveExpertise} className="w-full py-4 border border-white/20 text-white font-black uppercase tracking-widest rounded-xl hover:bg-white hover:text-black transition-all">Synchronize All</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="lg:col-span-2 grid gap-4">
+                            {expertise.map((f, i) => (
+                                <div key={i} className="bg-neutral-950 border border-white/10 rounded-3xl p-6 group flex items-center justify-between">
+                                    <div className="flex items-center gap-6">
+                                        <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white/20"><Zap size={20} /></div>
+                                        <div>
+                                            <h4 className="font-black uppercase tracking-tight">{f.title}</h4>
+                                            <p className="text-white/20 text-[9px] font-bold uppercase tracking-widest">{f.icon}</p>
+                                        </div>
+                                    </div>
+                                    <button onClick={() => setExpertise(expertise.filter((_, idx) => idx !== i))} className="text-white/10 hover:text-red-500 transition-all"><Trash size={18} /></button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {activeTab === 'services' && (
+                    <div className="grid lg:grid-cols-3 gap-10">
+                        <div className="lg:col-span-1">
+                            <div className="bg-neutral-900 sticky top-32 p-8 rounded-3xl border border-white/10">
+                                <h2 className="text-sm font-black uppercase tracking-[0.4em] mb-8 text-white/50">Market Entry</h2>
+                                <div className="space-y-6">
+                                    <div className="space-y-4">
+                                        <input placeholder="Package Name" className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm font-bold uppercase tracking-widest" value={serviceForm.title} onChange={e => setServiceForm({ ...serviceForm, title: e.target.value })} />
+                                        <input placeholder="Price Range (e.g. $100 - $500)" className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm font-bold" value={serviceForm.priceRange} onChange={e => setServiceForm({ ...serviceForm, priceRange: e.target.value })} />
+
+                                        <div className="space-y-2">
+                                            <label className="text-[9px] font-black uppercase tracking-widest text-white/20">Features</label>
+                                            <div className="flex gap-2">
+                                                <input placeholder="New Feature" className="flex-grow bg-black border border-white/10 rounded-xl px-4 py-2 text-xs" value={serviceItem} onChange={e => setServiceItem(e.target.value)} />
+                                                <button onClick={() => { if (serviceItem) { setServiceForm({ ...serviceForm, items: [...serviceForm.items, serviceItem] }); setServiceItem(''); } }} className="bg-white/5 border border-white/10 px-4 rounded-xl hover:bg-white/10"><Plus size={14} /></button>
+                                            </div>
+                                            <div className="flex flex-wrap gap-2 pt-2">
+                                                {serviceForm.items.map((item, i) => (
+                                                    <span key={i} className="text-[8px] bg-white/5 px-2 py-1 rounded-md border border-white/5 flex items-center gap-2">
+                                                        {item}
+                                                        <button onClick={() => setServiceForm({ ...serviceForm, items: serviceForm.items.filter((_, idx) => idx !== i) })}><Plus size={8} className="rotate-45" /></button>
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => {
+                                            setServices([...services, serviceForm]);
+                                            setServiceForm({ title: '', priceRange: '', items: [] });
+                                        }}
+                                        className="w-full py-4 bg-white text-black font-black uppercase tracking-widest rounded-xl hover:bg-neutral-200 transition-all flex items-center justify-center gap-2"
+                                    >
+                                        <Plus size={16} /> Deploy Package
+                                    </button>
+                                    <button onClick={handleSaveServices} className="w-full py-4 border border-white/20 text-white font-black uppercase tracking-widest rounded-xl hover:bg-white hover:text-black transition-all">Synchronize All</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="lg:col-span-2 grid gap-6">
+                            {services.map((s, i) => (
+                                <div key={i} className="bg-neutral-950 border border-white/10 rounded-3xl p-8 hover:border-white/20 transition-all group">
+                                    <div className="flex justify-between items-start mb-6">
+                                        <div>
+                                            <h3 className="text-xl font-black uppercase tracking-tighter mb-1">{s.title}</h3>
+                                            <p className="text-white/20 font-black tracking-[0.2em] text-[10px] uppercase">{s.priceRange}</p>
+                                        </div>
+                                        <button onClick={() => setServices(services.filter((_, idx) => idx !== i))} className="w-10 h-10 rounded-full border border-white/5 flex items-center justify-center text-white/10 hover:text-red-500 transition-all"><Trash size={16} /></button>
+                                    </div>
+                                    <div className="flex flex-wrap gap-3">
+                                        {s.items.map((item, idx) => (
+                                            <span key={idx} className="text-[9px] font-bold uppercase tracking-widest px-3 py-1 bg-white/5 border border-white/5 rounded-full text-white/40">{item}</span>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
                 {activeTab === 'profile' && (
                     <div className="grid lg:grid-cols-3 gap-10">
                         <div className="lg:col-span-1 border-r border-white/5 pr-10">
@@ -581,8 +856,14 @@ const Admin = () => {
                                 <h2 className="text-sm font-black uppercase tracking-[0.4em] mb-8 text-white/50">Brand Strategy</h2>
                                 <div className="space-y-6">
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-white/20 ml-2">Hero Image URL</label>
-                                        <input className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm" value={aboutInfo.image} onChange={e => setAboutInfo({ ...aboutInfo, image: e.target.value })} placeholder="https://..." />
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-white/20 ml-2">Hero Image</label>
+                                        <div className="flex gap-4">
+                                            <input className="flex-grow bg-black border border-white/10 rounded-xl px-4 py-3 text-sm" value={aboutInfo.image} onChange={e => setAboutInfo({ ...aboutInfo, image: e.target.value })} placeholder="https://..." />
+                                            <label className="cursor-pointer bg-white/5 border border-white/10 text-white px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all flex items-center justify-center whitespace-nowrap">
+                                                {uploading ? '...' : <ImageIcon size={14} />}
+                                                <input type="file" className="hidden" accept="image/*" onChange={(e) => handleUploadImage(e.target.files[0], 'about')} />
+                                            </label>
+                                        </div>
                                     </div>
                                     <input placeholder="Company Title" className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm" value={aboutInfo.title} onChange={e => setAboutInfo({ ...aboutInfo, title: e.target.value })} />
                                     <textarea placeholder="Mission Statement" rows="3" className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm resize-none" value={aboutInfo.mission} onChange={e => setAboutInfo({ ...aboutInfo, mission: e.target.value })} />
@@ -601,6 +882,10 @@ const Admin = () => {
                                 </div>
                                 <div className="flex gap-4">
                                     <input placeholder="Member Photo URL" className="flex-grow bg-black border border-white/10 rounded-xl px-4 py-3 text-sm" value={newTeamMember.image} onChange={e => setNewTeamMember({ ...newTeamMember, image: e.target.value })} />
+                                    <label className="cursor-pointer bg-white/5 border border-white/10 text-white px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all flex items-center justify-center whitespace-nowrap">
+                                        {uploading ? '...' : <ImageIcon size={16} />}
+                                        <input type="file" className="hidden" accept="image/*" onChange={(e) => handleUploadImage(e.target.files[0], 'team_new')} />
+                                    </label>
                                     <button onClick={handleAddTeamMember} className="px-8 bg-white text-black font-black uppercase tracking-widest rounded-xl flex items-center gap-2"><Plus size={16} /> Deploy</button>
                                 </div>
                             </div>
@@ -630,23 +915,42 @@ const Admin = () => {
                         ) : reviews.length === 0 ? (
                             <div className="p-20 text-center opacity-20 uppercase font-black tracking-widest">Gravity Well Empty (No Reviews).</div>
                         ) : reviews.map((review) => (
-                            <div key={review._id} className="bg-neutral-950 border border-white/10 rounded-3xl p-8 hover:border-white/20 transition-all flex justify-between items-center group">
-                                <div>
-                                    <div className="flex items-center gap-4 mb-4">
-                                        <span className={`text-[8px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${review.status === 'pending' ? 'bg-amber-500/20 text-amber-500' : 'bg-green-500/20 text-green-500'}`}>
-                                            {review.status}
-                                        </span>
-                                        {[...Array(5)].map((_, s) => (
-                                            <div key={s} className={`w-1 h-1 rounded-full ${s < review.rating ? 'bg-white' : 'bg-white/10'}`} />
-                                        ))}
+                            <div key={review._id} className="bg-neutral-950 border border-white/10 rounded-3xl p-8 hover:border-white/20 transition-all flex flex-col md:flex-row justify-between items-center group gap-8">
+                                <div className="flex gap-6 items-start flex-grow">
+                                    <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 overflow-hidden shrink-0 relative group/photo">
+                                        {(review.image || reviewPhotos[review._id]) ? (
+                                            <img src={review.image || reviewPhotos[review._id]} className="w-full h-full object-cover" alt="" />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-white/10"><ImageIcon size={20} /></div>
+                                        )}
+                                        {review.status === 'pending' && (
+                                            <label className="absolute inset-0 bg-black/60 opacity-0 group-hover/photo:opacity-100 transition-all flex items-center justify-center cursor-pointer">
+                                                <Plus size={14} className="text-white" />
+                                                <input type="file" className="hidden" accept="image/*" onChange={(e) => handleUploadImage(e.target.files[0], 'review_approval', review._id)} />
+                                            </label>
+                                        )}
                                     </div>
-                                    <h3 className="text-xl font-black uppercase text-white mb-1 group-hover:translate-x-2 transition-transform">{review.name}</h3>
-                                    <p className="text-[10px] text-white/20 font-black tracking-[0.4em] mb-4 uppercase italic">{review.email}</p>
-                                    <p className="text-white/60 text-sm leading-relaxed max-w-2xl font-light italic">"{review.comment}"</p>
+                                    <div>
+                                        <div className="flex items-center gap-4 mb-4">
+                                            <span className={`text-[8px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${review.status === 'pending' ? 'bg-amber-500/20 text-amber-500' : 'bg-green-500/20 text-green-500'}`}>
+                                                {review.status}
+                                            </span>
+                                            {[...Array(5)].map((_, s) => (
+                                                <div key={s} className={`w-1 h-1 rounded-full ${s < review.rating ? 'bg-white' : 'bg-white/10'}`} />
+                                            ))}
+                                        </div>
+                                        <h3 className="text-xl font-black uppercase text-white mb-1 group-hover:translate-x-2 transition-transform">{review.name}</h3>
+                                        <p className="text-[10px] text-white/20 font-black tracking-[0.4em] mb-4 uppercase italic">{review.email}</p>
+                                        <p className="text-white/60 text-sm leading-relaxed max-w-2xl font-light italic">"{review.comment}"</p>
+                                    </div>
                                 </div>
                                 <div className="flex gap-3">
                                     {review.status === 'pending' && (
-                                        <button onClick={() => handleUpdateReviewStatus(review._id, 'approved')} className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all" title="Approve Signal">
+                                        <button
+                                            onClick={() => handleUpdateReviewStatus(review._id, 'approved')}
+                                            className={`w-12 h-12 rounded-full border border-white/10 flex items-center justify-center transition-all ${reviewPhotos[review._id] ? 'bg-green-500 border-green-500 text-black' : 'hover:bg-white hover:text-black'}`}
+                                            title={reviewPhotos[review._id] ? "Approve with Photo" : "Approve Signal"}
+                                        >
                                             <Check size={20} />
                                         </button>
                                     )}

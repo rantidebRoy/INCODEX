@@ -28,8 +28,11 @@ router.get('/all', auth, async (req, res) => {
 // Admin: Approve / Reject a review
 router.patch('/:id/status', auth, async (req, res) => {
     try {
-        const { status } = req.body;
-        const review = await Review.findByIdAndUpdate(req.params.id, { status }, { new: true });
+        const { status, image } = req.body;
+        const updateData = { status };
+        if (image) updateData.image = image;
+
+        const review = await Review.findByIdAndUpdate(req.params.id, updateData, { new: true });
         res.json(review);
     } catch (err) {
         res.status(500).json({ message: err.message });

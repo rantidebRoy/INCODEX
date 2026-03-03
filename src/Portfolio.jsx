@@ -1,50 +1,38 @@
-import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Layout, Link as LinkIcon, ChevronRight, X, Maximize2, ExternalLink, Globe, Monitor, Smartphone, Tablet } from 'lucide-react';
+import axios from 'axios';
+import { Layout, Link as LinkIcon, ChevronRight, X, Maximize2, ExternalLink, Globe, Monitor, Smartphone, Tablet, Loader } from 'lucide-react';
+
+const getApiUrl = () => {
+    let base = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    if (base.endsWith('/')) base = base.slice(0, -1);
+    return base.endsWith('/api') ? base : `${base}/api`;
+};
+const API_URL = getApiUrl();
 
 const Portfolio = ({ Reveal }) => {
     const [previewUrl, setPreviewUrl] = useState(null);
     const [previewTitle, setPreviewTitle] = useState("");
     const [viewMode, setViewMode] = useState('desktop');
 
+    const [projects, setProjects] = useState([]);
+    const [loading, setLoading] = useState(true);
+
     useEffect(() => {
         window.scrollTo(0, 0);
+        fetchProjects();
     }, []);
 
-    const projects = [
-        {
-            title: "Ajker Bangla News",
-            subtitle: "আজকের বাংলা - দেশের কণ্ঠ প্রান্তিকের অন্তর",
-            description: "A comprehensive digital news portal delivering real-time updates on politics, economy, and culture across Bangladesh.",
-            url: "https://ajkerbangla.news",
-            category: "Media & News",
-            image: "/AjkerBangla.png" // Example of another local image
-        },
-        {
-            title: "MCRL - DU",
-            subtitle: "Material Chemistry Research Lab",
-            description: "An extraordinary research facility at the University of Dhaka focusing on material science innovations and chemical engineering.",
-            url: "https://mcrl.du.ac.bd",
-            category: "Research",
-            image: "/MaterialChemistry.png" // Using local image from public folder
-        },
-        {
-            title: "DUNC - Nanotech Center",
-            subtitle: "Dhaka University Nanotechnology Centre",
-            description: "Leading the frontier of nanoscale engineering and material physics. Architects of tomorrow's technological foundations.",
-            url: "https://dunc.incodexbd.com",
-            category: "Engineering",
-            image: "/Nano.png"
-        },
-        {
-            title: "Criminology - DU",
-            subtitle: "Department of Criminology",
-            description: "Official academic portal for the Department of Criminology at University of Dhaka, showcasing research, faculty, and programs.",
-            url: "https://criminology.du.ac.bd",
-            category: "Academic",
-            image: "/Criminology.png"
+    const fetchProjects = async () => {
+        try {
+            const res = await axios.get(`${API_URL}/projects`);
+            setProjects(res.data);
+            setLoading(false);
+        } catch (err) {
+            console.error(err);
+            setLoading(false);
         }
-    ];
+    };
+
+
 
     const openPreview = (url, title) => {
         setPreviewUrl(url);
@@ -71,62 +59,69 @@ const Portfolio = ({ Reveal }) => {
                     </Reveal>
                 </div>
 
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {projects.map((project, i) => (
-                        <motion.div
-                            key={i}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: i * 0.1 }}
-                            className="group relative bg-neutral-950 border border-white/5 overflow-hidden hover:border-white/20 transition-all duration-500 rounded-xl flex flex-col"
-                        >
-                            <div className="relative aspect-[16/10] bg-neutral-900 flex items-center justify-center overflow-hidden border-b border-white/5 cursor-pointer"
-                                onClick={() => openPreview(project.url, project.title)}>
-                                <img
-                                    src={project.image}
-                                    alt={project.title}
-                                    className="absolute inset-0 w-full h-full object-contain p-8 opacity-70 group-hover:scale-110 transition-transform duration-700 bg-black/40"
-                                    onError={(e) => { e.target.style.display = 'none'; }}
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent z-10" />
+                {loading ? (
+                    <div className="flex flex-col items-center justify-center py-40 gap-4">
+                        <Loader className="animate-spin text-white/20" size={40} />
+                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20">Syncing Portfolio Data...</p>
+                    </div>
+                ) : (
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {projects.map((project, i) => (
+                            <motion.div
+                                key={i}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: i * 0.1 }}
+                                className="group relative bg-neutral-950 border border-white/5 overflow-hidden hover:border-white/20 transition-all duration-500 rounded-xl flex flex-col"
+                            >
+                                <div className="relative aspect-[16/10] bg-neutral-900 flex items-center justify-center overflow-hidden border-b border-white/5 cursor-pointer"
+                                    onClick={() => openPreview(project.url, project.title)}>
+                                    <img
+                                        src={project.image}
+                                        alt={project.title}
+                                        className="absolute inset-0 w-full h-full object-contain p-8 opacity-70 group-hover:scale-110 transition-transform duration-700 bg-black/40"
+                                        onError={(e) => { e.target.style.display = 'none'; }}
+                                        Lay />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent z-10" />
 
-                                {/* Overlay Icon */}
-                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-20">
-                                    <div className="bg-white text-black px-6 py-3 rounded-full font-black text-[10px] tracking-widest uppercase flex items-center shadow-2xl scale-90 group-hover:scale-100 transition-transform">
-                                        <Maximize2 size={12} className="mr-2" /> Live Preview
+                                    {/* Overlay Icon */}
+                                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                                        <div className="bg-white text-black px-6 py-3 rounded-full font-black text-[10px] tracking-widest uppercase flex items-center shadow-2xl scale-90 group-hover:scale-100 transition-transform">
+                                            <Maximize2 size={12} className="mr-2" /> Live Preview
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div className="p-6 flex flex-col flex-grow">
-                                <div className="mb-4">
-                                    <span className="text-white/30 text-[8px] font-bold tracking-[0.2em] uppercase mb-1 block">{project.category}</span>
-                                    <h3 className="text-lg font-black text-white uppercase tracking-tight leading-tight">{project.title}</h3>
+                                <div className="p-6 flex flex-col flex-grow">
+                                    <div className="mb-4">
+                                        <span className="text-white/30 text-[8px] font-bold tracking-[0.2em] uppercase mb-1 block">{project.category}</span>
+                                        <h3 className="text-lg font-black text-white uppercase tracking-tight leading-tight">{project.title}</h3>
+                                    </div>
+
+                                    <p className="text-white/50 text-xs leading-relaxed font-light mb-8 flex-grow">
+                                        {project.description}
+                                    </p>
+
+                                    <div className="flex items-center justify-between border-t border-white/5 pt-6">
+                                        <button
+                                            onClick={() => openPreview(project.url, project.title)}
+                                            className="text-white/40 hover:text-white text-[9px] font-black tracking-widest uppercase flex items-center transition-colors">
+                                            PREVIEW <Maximize2 size={12} className="ml-2" />
+                                        </button>
+                                        <a
+                                            href={project.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-white/40 hover:text-white text-[9px] font-black tracking-widest uppercase flex items-center transition-colors">
+                                            VISIT <ExternalLink size={12} className="ml-2" />
+                                        </a>
+                                    </div>
                                 </div>
-
-                                <p className="text-white/50 text-xs leading-relaxed font-light mb-8 flex-grow">
-                                    {project.description}
-                                </p>
-
-                                <div className="flex items-center justify-between border-t border-white/5 pt-6">
-                                    <button
-                                        onClick={() => openPreview(project.url, project.title)}
-                                        className="text-white/40 hover:text-white text-[9px] font-black tracking-widest uppercase flex items-center transition-colors">
-                                        PREVIEW <Maximize2 size={12} className="ml-2" />
-                                    </button>
-                                    <a
-                                        href={project.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-white/40 hover:text-white text-[9px] font-black tracking-widest uppercase flex items-center transition-colors">
-                                        VISIT <ExternalLink size={12} className="ml-2" />
-                                    </a>
-                                </div>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+                )}
 
                 <div className="mt-20 text-center text-white/10 text-[8px] tracking-[0.3em] uppercase">
                     Architects of Digital Infrastructure
