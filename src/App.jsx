@@ -784,8 +784,9 @@ const Testimonials = () => {
       alert('Review sent for approval!');
       setReviewForm({ name: '', email: '', comment: '', rating: 5 });
     } catch (err) {
-      console.error(err);
-      alert('Transmission failed. Try again.');
+      console.error('Review Submission Error:', err);
+      const msg = err.response?.data?.message || 'Transmission failed. Try again.';
+      alert(msg);
     } finally {
       setSubmitting(false);
     }

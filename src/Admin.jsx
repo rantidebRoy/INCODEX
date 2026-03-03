@@ -87,7 +87,14 @@ const Admin = () => {
             setIsLoggedIn(true);
             setError('');
         } catch (err) {
-            setError('Invalid username or password');
+            console.error('Login Error:', err);
+            if (err.response) {
+                setError(err.response.data.message || 'Invalid username or password');
+            } else if (err.request) {
+                setError('Cannot connect to server. Check your API URL.');
+            } else {
+                setError('An unexpected error occurred.');
+            }
         }
     };
 
