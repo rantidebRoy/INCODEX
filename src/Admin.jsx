@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { motion } from 'framer-motion';
-import { Trash, Check, Plus, LogOut, ChevronRight, MessageSquare, BookOpen, Eye, Edit3, Image as ImageIcon, Users, Settings as SettingsIcon, Mail, Phone, MapPin, Globe, Share2, Quote, Lock, Zap, DollarSign, Layout } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Trash, Check, Plus, LogOut, ChevronRight, MessageSquare, BookOpen, Eye, Edit3, Image as ImageIcon, Users, Settings as SettingsIcon, Mail, Phone, MapPin, Globe, Share2, Quote, Lock, Zap, DollarSign, Layout, MoreVertical, Menu, X } from 'lucide-react';
 
 const getApiUrl = () => {
     let base = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -15,6 +15,7 @@ const Admin = () => {
     const [token, setToken] = useState(localStorage.getItem('adminToken'));
     const [activeTab, setActiveTab] = useState(localStorage.getItem('adminActiveTab') || 'quotes');
     const [loading, setLoading] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     useEffect(() => {
         localStorage.setItem('adminActiveTab', activeTab);
@@ -486,46 +487,75 @@ const Admin = () => {
                         </div>
                     </div>
 
-                    <div className="flex items-center">
+                    <div className="flex items-center gap-4">
+                        <div className="hidden lg:block">
+                            <button
+                                onClick={handleLogout}
+                                className="bg-white hover:bg-neutral-200 text-black px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all shadow-xl flex items-center gap-2 group"
+                            >
+                                <LogOut size={12} className="group-hover:-translate-x-1 transition-transform" />
+                                <span>Sign Out</span>
+                            </button>
+                        </div>
+
+                        {/* Mobile Menu Toggle */}
                         <button
-                            onClick={handleLogout}
-                            className="bg-white hover:bg-neutral-200 text-black px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all shadow-xl flex items-center gap-2 group"
+                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                            className="lg:hidden text-white/80 hover:text-white transition-colors"
                         >
-                            <LogOut size={12} className="group-hover:-translate-x-1 transition-transform" />
-                            <span>Sign Out</span>
+                            {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
                         </button>
                     </div>
                 </div>
-            </nav>
 
-            {/* Mobile Navigation Dock */}
-            <div className="lg:hidden fixed bottom-8 left-1/2 -translate-x-1/2 bg-neutral-900/90 backdrop-blur-2xl border border-white/10 p-2 rounded-2xl z-50 flex gap-2 shadow-2xl">
-                {[
-                    { id: 'quotes', icon: MessageSquare },
-                    { id: 'blogs', icon: BookOpen },
-                    { id: 'projects', icon: Layout },
-                    { id: 'expertise', icon: Zap },
-                    { id: 'services', icon: DollarSign },
-                    { id: 'reviews', icon: Quote },
-                    { id: 'profile', icon: Users },
-                    { id: 'settings', icon: SettingsIcon }
-                ].map((tab) => (
-                    <button
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id)}
-                        className={`p-4 rounded-xl transition-all ${activeTab === tab.id ? 'bg-white text-black' : 'text-white/40'
-                            }`}
-                    >
-                        <tab.icon size={20} />
-                    </button>
-                ))}
-                <button
-                    onClick={handleLogout}
-                    className="p-4 rounded-xl text-white/40 hover:text-red-500 transition-all border-l border-white/10 ml-2"
-                >
-                    <LogOut size={20} />
-                </button>
-            </div>
+                {/* Mobile Menu Overlay */}
+                <AnimatePresence>
+                    {mobileMenuOpen && (
+                        <motion.div
+                            initial={{ x: '100%' }}
+                            animate={{ x: 0 }}
+                            exit={{ x: '100%' }}
+                            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                            className="fixed inset-0 top-0 left-0 w-full h-screen bg-black/95 backdrop-blur-2xl z-[90] flex flex-col pt-32 px-10 gap-8 lg:hidden"
+                        >
+                            <nav className="flex flex-col gap-4">
+                                {[
+                                    { id: 'quotes', icon: MessageSquare, label: 'Quotes' },
+                                    { id: 'blogs', icon: BookOpen, label: 'Journal' },
+                                    { id: 'projects', icon: Layout, label: 'Portfolio' },
+                                    { id: 'expertise', icon: Zap, label: 'Expertise' },
+                                    { id: 'services', icon: DollarSign, label: 'Pricing' },
+                                    { id: 'reviews', icon: Quote, label: 'Reviews' },
+                                    { id: 'profile', icon: Users, label: 'Team' },
+                                    { id: 'settings', icon: SettingsIcon, label: 'Settings' }
+                                ].map((tab, i) => (
+                                    <motion.button
+                                        key={tab.id}
+                                        initial={{ opacity: 0, x: 20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: i * 0.05 }}
+                                        onClick={() => { setActiveTab(tab.id); setMobileMenuOpen(false); }}
+                                        className={`flex items-center gap-6 p-4 rounded-2xl transition-all ${activeTab === tab.id ? 'bg-white text-black' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+                                    >
+                                        <tab.icon size={20} />
+                                        <span className="text-xl font-black uppercase tracking-tighter">{tab.label}</span>
+                                    </motion.button>
+                                ))}
+                            </nav>
+
+                            <div className="mt-auto pb-20 border-t border-white/5 pt-10">
+                                <button
+                                    onClick={handleLogout}
+                                    className="flex items-center gap-6 p-4 rounded-2xl text-red-500 hover:bg-red-500/10 transition-all w-full"
+                                >
+                                    <LogOut size={20} />
+                                    <span className="text-xl font-black uppercase tracking-tighter">Sign Out</span>
+                                </button>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </nav>
 
             <div className="max-w-7xl mx-auto px-6 pt-40 pb-32">
                 <header className="mb-20">

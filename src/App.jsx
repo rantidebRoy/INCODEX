@@ -8,7 +8,7 @@ import {
   useLocation,
   useParams
 } from 'react-router-dom';
-import { Menu, X, ArrowRight, Shield, Zap, Globe, Layout, ChevronRight, Github, Twitter, Linkedin, Sun, Moon, Link as LinkIcon, ShoppingCart, Quote, User, Image as ImageIcon, Monitor, Smartphone } from 'lucide-react';
+import { Menu, X, ArrowRight, Shield, Zap, Globe, Layout, ChevronRight, Github, Twitter, Linkedin, Sun, Moon, Link as LinkIcon, ShoppingCart, Quote, User, Image as ImageIcon, Monitor, Smartphone, Home, BookOpen, MessageSquare, Mail, MoreVertical } from 'lucide-react';
 import Portfolio from './Portfolio';
 import Admin from './Admin';
 import axios from 'axios';
@@ -22,7 +22,7 @@ const API_URL = getApiUrl();
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -46,54 +46,87 @@ const Navbar = () => {
   );
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      className={`fixed top-0 left-0 w-full z-[100] transition-all duration-700 px-6 py-8 ${isScrolled ? 'bg-black/95 backdrop-blur-3xl py-6 border-b border-white/5' : 'bg-transparent'}`}
-    >
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
-        <Link to="/" className="relative group overflow-hidden">
-          <img src="/inc-02.png" alt="INCODEX" className="h-6 md:h-7 opacity-80 group-hover:opacity-100 transition-all duration-700 hover:scale-105" />
-        </Link>
+    <>
+      <motion.nav
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        className={`fixed top-0 left-0 w-full z-[100] transition-all duration-700 px-4 md:px-6 py-4 md:py-8 ${isScrolled ? 'bg-black/80 backdrop-blur-xl py-3 md:py-6 border-b border-white/5' : 'bg-transparent'}`}
+      >
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <Link to="/" className="relative group overflow-hidden">
+            <img src="/inc-02.png" alt="INCODEX" className="h-6 md:h-7 opacity-80 group-hover:opacity-100 transition-all duration-700 hover:scale-105" />
+          </Link>
 
-        <div className="hidden md:flex items-center space-x-12">
-          <NavLink to="/">Home</NavLink>
-          <NavLink to="/portfolio">Portfolio</NavLink>
-          <NavLink to="/#quote">Quote</NavLink>
-          <NavLink to="/#blog">Blog</NavLink>
-          <NavLink to="/#about">About</NavLink>
-          <NavLink to="/#contact">Contact</NavLink>
+          <div className="hidden md:flex items-center space-x-12">
+            <NavLink to="/">Home</NavLink>
+            <NavLink to="/portfolio">Portfolio</NavLink>
+            <NavLink to="/#quote">Quote</NavLink>
+            <NavLink to="/#blog">Blog</NavLink>
+            <NavLink to="/#about">About</NavLink>
+            <NavLink to="/#contact">Contact</NavLink>
+          </div>
+
+          <div className="hidden md:block">
+            <Link to="/#contact" className="bg-white hover:bg-neutral-200 text-black px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all shadow-xl">
+              Initiate Project
+            </Link>
+          </div>
+
+          {/* Mobile Menu Toggle */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden text-white/80 hover:text-white transition-colors"
+          >
+            {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
         </div>
 
-        <button
-          className="md:hidden text-white group"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          <div className="w-6 h-px bg-white mb-2 group-hover:w-8 transition-all duration-500"></div>
-          <div className="w-6 h-px bg-white group-hover:w-4 transition-all duration-500"></div>
-        </button>
-      </div>
+        {/* Fullscreen Mobile Menu Overlay */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed inset-0 top-0 left-0 w-full h-screen bg-black/95 backdrop-blur-2xl z-[90] flex flex-col pt-32 px-10 gap-8"
+            >
+              <nav className="flex flex-col gap-6">
+                {[
+                  { name: 'Home', to: '/' },
+                  { name: 'Portfolio', to: '/portfolio' },
+                  { name: 'Request Quote', to: '/#quote' },
+                  { name: 'Journal', to: '/#blog' },
+                  { name: 'About', to: '/#about' },
+                  { name: 'Contact', to: '/#contact' }
+                ].map((item, i) => (
+                  <motion.div
+                    key={item.name}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.1 }}
+                  >
+                    <Link
+                      to={item.to}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="text-4xl font-black uppercase tracking-tighter text-white/40 hover:text-white transition-all flex items-center group"
+                    >
+                      <span className="opacity-0 group-hover:opacity-100 mr-4 text-xs tracking-[0.5em] text-white">0{i + 1}</span>
+                      {item.name}
+                    </Link>
+                  </motion.div>
+                ))}
+              </nav>
 
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, x: '100%' }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '100%' }}
-            className="fixed inset-0 bg-black z-[101] flex flex-col p-12 justify-center"
-          >
-            <button className="absolute top-12 right-12 text-white text-sm font-black uppercase tracking-widest hover:opacity-50 transition-all" onClick={() => setIsMobileMenuOpen(false)}>CLOSE [X]</button>
-            <div className="flex flex-col space-y-12">
-              {['Home', 'Portfolio', 'Quote', 'Blog', 'About', 'Contact'].map((item) => (
-                <Link key={item} to={item === 'Home' ? '/' : (item === 'Portfolio' ? '/portfolio' : `/#${item.toLowerCase()}`)} onClick={() => setIsMobileMenuOpen(false)} className="text-5xl font-black text-white uppercase tracking-tighter hover:italic hover:translate-x-4 transition-all duration-500">
-                  {item}
-                </Link>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.nav>
+              <div className="mt-auto pb-20 border-t border-white/5 pt-10">
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 mb-4">Communication Line</p>
+                <a href="mailto:admin@incodex.com" className="text-white/60 hover:text-white transition-colors text-sm font-bold tracking-widest uppercase">admin@incodex.com</a>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.nav>
+    </>
   );
 };
 
@@ -193,17 +226,17 @@ const Hero = () => {
 
         <div className="text-center max-w-4xl mx-auto">
           <Reveal className="mx-auto">
-            <h1 className="text-4xl md:text-5xl lg:text-7xl font-black text-white mb-2 leading-[1.1] tracking-tight uppercase">
+            <h1 className="text-[10vw] md:text-5xl lg:text-7xl font-black text-white mb-2 leading-[1.1] tracking-tight uppercase">
               Beautiful things
             </h1>
           </Reveal>
           <Reveal delay={0.1} className="mx-auto">
-            <h1 className="text-4xl md:text-5xl lg:text-7xl font-black text-white mb-2 leading-[1.1] tracking-tight uppercase">
+            <h1 className="text-[10vw] md:text-5xl lg:text-7xl font-black text-white mb-2 leading-[1.1] tracking-tight uppercase">
               come together
             </h1>
           </Reveal>
           <Reveal delay={0.2} className="mx-auto">
-            <h1 className="text-3xl md:text-4xl lg:text-6xl font-black text-white mb-8 leading-[1.1] tracking-tight uppercase">
+            <h1 className="text-[8vw] md:text-4xl lg:text-6xl font-black text-white mb-8 leading-[1.1] tracking-tight uppercase">
               ONE <span className="text-white/40">BYTE</span> at a time.
             </h1>
           </Reveal>
