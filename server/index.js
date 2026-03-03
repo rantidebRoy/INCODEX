@@ -42,6 +42,11 @@ app.use('/api/settings', settingsRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/reviews', reviewRoutes);
 
+// API Health Check
+app.get('/api', (req, res) => {
+    res.json({ message: 'INCODEX API is Active and Secured', version: '1.0.0' });
+});
+
 app.get('/', (req, res) => {
     res.send('INCODEX Server is Running');
 });
