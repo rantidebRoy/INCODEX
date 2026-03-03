@@ -38,4 +38,22 @@ router.post('/setup', async (req, res) => {
     }
 });
 
+// Change Password
+router.post('/change-password', require('../middleware/authMiddleware'), async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const admin = await Admin.findById(req.adminId);
+        if (!admin) return res.status(404).json({ message: 'Admin not found' });
+
+        const isMatch = await bcrypt.compare(currentPassword, admin.password);
+        if (!isMatch) return res.status(401).json({ message: 'Current password incorrect' });
+
+        admin.password = await bcrypt.hash(newPassword, 10);
+        await admin.save();
+        res.json({ message: 'Password updated successfully' });
+    } catch (err) {
+        res.status(500).json({ message: 'Server Error', error: err.message });
+    }
+});
+
 module.exports = router;

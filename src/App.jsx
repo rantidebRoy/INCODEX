@@ -52,16 +52,12 @@ const Navbar = () => {
         </Link>
 
         <div className="hidden md:flex items-center space-x-12">
-          <NavLink to="/#features">Systems</NavLink>
-          <NavLink to="/#about">About</NavLink>
+          <NavLink to="/">Home</NavLink>
           <NavLink to="/portfolio">Portfolio</NavLink>
-          <NavLink to="/#blog">Journal</NavLink>
-          <Link
-            to="/#quote"
-            className="bg-white text-black text-[10px] font-black uppercase tracking-[0.3em] px-8 py-3.5 rounded-full hover:bg-neutral-200 transition-all active:scale-95 duration-500"
-          >
-            Signal
-          </Link>
+          <NavLink to="/#quote">Quote</NavLink>
+          <NavLink to="/#blog">Blog</NavLink>
+          <NavLink to="/#about">About</NavLink>
+          <NavLink to="/#contact">Contact</NavLink>
         </div>
 
         <button
@@ -83,7 +79,7 @@ const Navbar = () => {
           >
             <button className="absolute top-12 right-12 text-white text-sm font-black uppercase tracking-widest hover:opacity-50 transition-all" onClick={() => setIsMobileMenuOpen(false)}>CLOSE [X]</button>
             <div className="flex flex-col space-y-12">
-              {['Home', 'Systems', 'About', 'Portfolio', 'Journal'].map((item) => (
+              {['Home', 'Portfolio', 'Quote', 'Blog', 'About', 'Contact'].map((item) => (
                 <Link key={item} to={item === 'Home' ? '/' : (item === 'Portfolio' ? '/portfolio' : `/#${item.toLowerCase()}`)} onClick={() => setIsMobileMenuOpen(false)} className="text-5xl font-black text-white uppercase tracking-tighter hover:italic hover:translate-x-4 transition-all duration-500">
                   {item}
                 </Link>
@@ -626,46 +622,26 @@ const QuoteSection = () => {
   );
 };
 
-const AboutCompany = ({ data }) => {
-  if (!data) return null;
+const TeamSection = ({ data }) => {
+  if (!data?.team || data.team.length === 0) return null;
   return (
-    <section id="about" className="py-32 px-6 bg-black relative overflow-hidden">
-      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-24 items-center mb-32">
-        <div className="w-full lg:w-1/2">
-          <Reveal>
-            <span className="text-[10px] font-black uppercase tracking-[0.5em] text-white/30 mb-8 block italic">WHO WE ARE</span>
-            <h2 className="text-4xl md:text-6xl font-black uppercase mb-12 tracking-tight leading-[1.1]">{data.title || "Our Story"}</h2>
-          </Reveal>
-          <Reveal delay={0.2}>
-            <p className="text-white/60 text-lg md:text-xl leading-relaxed mb-10 font-light whitespace-pre-wrap">{data.description || "Incorporate at the core of digital evolution."}</p>
-          </Reveal>
-          <div className="grid grid-cols-2 gap-10">
-            <div>
-              <h4 className="text-white/20 text-[10px] font-black uppercase tracking-widest mb-4 italic">MISSION</h4>
-              <p className="text-white/50 text-sm leading-relaxed">{data.mission || "Build the future today."}</p>
-            </div>
-          </div>
-        </div>
-        <div className="w-full lg:w-1/2 relative group">
-          <div className="absolute inset-0 bg-white/5 blur-3xl rounded-full scale-75 opacity-20 pointer-events-none group-hover:scale-90 transition-transform duration-1000" />
-          <div className="aspect-[4/5] rounded-[3rem] overflow-hidden border border-white/5 hover:border-white/10 transition-all duration-700">
-            <img src={data.image || "https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80"} className="w-full h-full object-cover grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000 scale-105 group-hover:scale-110" alt="" />
-          </div>
-        </div>
-      </div>
-
-      {/* Team Section */}
+    <section id="about" className="py-32 px-6 bg-black relative overflow-hidden border-t border-white/5">
       <div className="max-w-7xl mx-auto">
-        <h3 className="text-2xl font-black uppercase tracking-[0.3em] mb-20 text-center opacity-40">The Architects</h3>
+        <div className="text-center mb-24">
+          <Reveal className="mx-auto">
+            <h2 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-tight uppercase">BEHIND THE BYTES</h2>
+          </Reveal>
+          <motion.div initial={{ width: 0 }} whileInView={{ width: 80 }} viewport={{ once: true }} className="h-1 bg-white mx-auto opacity-20" />
+        </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
-          {data.team?.map((member, i) => (
-            <div key={i} className="group hover:-translate-y-4 transition-all duration-700">
-              <div className="aspect-[3/4] rounded-3xl overflow-hidden mb-8 border border-white/5 group-hover:border-white/20 transition-all duration-700">
-                <img src={member.image || "/avatar.png"} className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" alt="" />
+          {data.team.map((member, i) => (
+            <motion.div key={i} whileHover={{ y: -10 }} className="group">
+              <div className="aspect-[3/4] rounded-3xl overflow-hidden border border-white/5 group-hover:border-white/20 transition-all duration-700 bg-neutral-950 mb-8">
+                <img src={member.image || "/avatar.png"} alt={member.name} className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000" />
               </div>
-              <h4 className="font-black uppercase tracking-tight text-xl mb-1 group-hover:translate-x-2 transition-transform duration-500">{member.name}</h4>
-              <p className="text-white/20 text-[10px] font-black uppercase tracking-[0.4em] transform group-hover:translate-x-2 transition-transform duration-700 delay-100">{member.role}</p>
-            </div>
+              <h4 className="text-xl font-black uppercase text-white mb-1 group-hover:translate-x-2 transition-transform duration-500">{member.name}</h4>
+              <p className="text-[10px] font-black uppercase text-white/20 tracking-[0.4em] group-hover:translate-x-2 transition-transform duration-700 delay-100 italic">{member.role}</p>
+            </motion.div>
           ))}
         </div>
       </div>
@@ -673,7 +649,7 @@ const AboutCompany = ({ data }) => {
   );
 };
 
-const CTA = () => (
+const CTA = ({ settings }) => (
   <section id="contact" className="py-24 px-6 bg-black overflow-hidden relative transition-colors duration-500 border-t border-white/5">
     <div className="max-w-7xl mx-auto relative z-10 text-center flex flex-col items-center justify-center gap-12">
       <div className="max-w-4xl">
@@ -684,13 +660,20 @@ const CTA = () => (
             ONE <span className="text-white/40">BYTE</span> AT A TIME.
           </h2>
         </Reveal>
-        <p className="text-xl text-white/60 max-w-xl">
-          Discover just how capable you really are
-        </p>
+        <div className="space-y-4 mb-10">
+          <p className="text-xl text-white/60 mb-8 italic">Ready to transform your vision?</p>
+          {settings && (
+            <div className="flex flex-col md:flex-row justify-center gap-8 text-[12px] font-black uppercase tracking-[0.3em] text-white/30">
+              <span className="hover:text-white transition-colors">{settings.email}</span>
+              <span className="hidden md:block opacity-20">|</span>
+              <span className="hover:text-white transition-colors">{settings.phone}</span>
+            </div>
+          )}
+        </div>
       </div>
-      <button className="bg-white text-black px-12 py-6 rounded-full font-black text-xl hover:bg-neutral-200 transition-colors shadow-2xl uppercase">
+      <a href="/#quote" className="bg-white text-black px-12 py-6 rounded-full font-black text-xl hover:bg-neutral-200 transition-colors shadow-2xl uppercase tracking-widest">
         ORDER NOW
-      </button>
+      </a>
     </div>
   </section>
 );
@@ -785,121 +768,93 @@ const Footer = ({ data }) => (
 );
 
 const Testimonials = () => {
-  const reviews = [
-    {
-      title: "A game-changer for our online news portal!",
-      content: "The team at INCODEX delivered a fast, dynamic website for our news agency. The design perfectly balances aesthetics with functionality, easy to navigate and stay updated. We've got more engagement and traffic.",
-      author: "A R Ahmed Sujon",
-      role: "Editor, Nobojug News",
-      image: "/review1.png"
-    },
-    {
-      title: "Our online store to a sales powerhouse!",
-      content: "We couldn't be happier with the e-commerce website built by INCODEX. The design is sleek, user-friendly, and optimized for conversions. Our customers love the smooth shopping experience, and we've already seen an increase in sales.",
-      author: "Shamim Reza",
-      role: "Owner, Shopping 24",
-      image: "/review2.png"
-    },
-    {
-      title: "A perfect platform for our mission!",
-      content: "The website INCODEX created is professional, user-friendly, and truly reflects our organization's values. It's made connecting with our community much easier. We're thrilled with the results and highly recommend their work!",
-      author: "Tasbil Tonmoy",
-      role: "President, CDFB",
-      image: "/review3.png"
+  const [reviews, setReviews] = useState([]);
+  const [reviewForm, setReviewForm] = useState({ name: '', email: '', comment: '', rating: 5 });
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    axios.get(`${API_URL}/reviews/approved`).then(res => setReviews(res.data));
+  }, []);
+
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    try {
+      await axios.post(`${API_URL}/reviews/submit`, reviewForm);
+      alert('Review sent for approval!');
+      setReviewForm({ name: '', email: '', comment: '', rating: 5 });
+    } catch (err) {
+      console.error(err);
+      alert('Transmission failed. Try again.');
+    } finally {
+      setSubmitting(false);
     }
-  ];
+  };
 
   return (
     <section className="py-32 px-6 bg-black border-t border-white/5 relative overflow-hidden">
-      {/* Background decoration */}
-      <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-white/5 blur-[100px] rounded-full -mr-20 -mt-20" />
-
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="text-center mb-24">
-          <Reveal className="mx-auto">
-            <h2 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-tight uppercase">CLIENT VOICES</h2>
-          </Reveal>
-          <motion.div
-            initial={{ width: 0 }}
-            whileInView={{ width: 80 }}
-            viewport={{ once: true }}
-            className="h-1 bg-white mx-auto opacity-20"
-          />
-        </div>
-
-        {/* Priority Spotlight Review */}
-        <div className="max-w-4xl mx-auto mb-32 border-b border-white/5 pb-24 text-center">
-          <div className="flex justify-center mb-10">
-            <Quote size={40} className="text-white opacity-20" />
-          </div>
-          <Reveal className="mx-auto">
-            <h3 className="text-2xl md:text-4xl font-black text-white mb-10 tracking-tight uppercase leading-[1.1]">
-              "We feel confident to use their skills <br /> to boost our presence online!"
-            </h3>
-          </Reveal>
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1, delay: 0.5 }}
-            className="text-lg md:text-xl text-white/50 mb-12 leading-relaxed italic font-light max-w-3xl mx-auto"
-          >
-            Working with INCODEX was a great experience. They developed a modern, user-friendly website that exceeded our expectations. Their attention to detail and dedication to delivering high-quality work stood out. The positive feedback from our users has been overwhelming. We highly recommend their services.
-          </motion.p>
-          <div className="flex flex-col items-center">
-            <div className="h-24 mb-6 relative flex items-center justify-center">
-              <User size={40} className="text-white opacity-20 absolute" />
-              <img
-                src="/chairman.png"
-                alt="Chairman"
-                className="h-full w-auto object-contain relative z-10 transition-opacity duration-500"
-                onLoad={(e) => { e.target.style.opacity = 1; }}
-                onError={(e) => { e.target.style.opacity = 0; }}
-                style={{ opacity: 0 }}
-              />
-            </div>
-            <span className="text-white font-black text-sm tracking-[0.4em] uppercase">Chairman</span>
-            <span className="text-white/30 text-[10px] mt-2 tracking-[0.2em] uppercase max-w-xs cursor-default text-center">Dept. of Criminology, University of Dhaka</span>
-          </div>
-        </div>
-
-        {/* Secondary Reviews Grid */}
-        <div className="grid md:grid-cols-3 gap-12">
-          {reviews.map((review, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.6 }}
-              className="group flex flex-col h-full"
-            >
-              <Quote size={20} className="text-white opacity-10 mb-6 group-hover:opacity-100 transition-opacity duration-500" />
-              <h4 className="text-lg font-black text-white mb-6 uppercase tracking-tight leading-tight flex-grow">
-                {review.title}
-              </h4>
-              <p className="text-sm text-white/40 leading-relaxed mb-10 font-light">
-                {review.content}
-              </p>
-              <div className="mt-auto flex items-center space-x-4">
-                <div className="h-10 relative flex items-center justify-center flex-shrink-0">
-                  <User size={20} className="text-white opacity-20 absolute" />
-                  <img
-                    src={review.image}
-                    alt=""
-                    className="h-full w-auto object-contain relative z-10 transition-opacity duration-500"
-                    onLoad={(e) => { e.target.style.opacity = 1; }}
-                    onError={(e) => { e.target.style.opacity = 0; }}
-                    style={{ opacity: 0 }}
-                  />
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col lg:flex-row gap-20 items-start">
+          <div className="w-full lg:w-1/2">
+            <Reveal>
+              <h2 className="text-3xl md:text-5xl font-black text-white mb-16 tracking-tight uppercase leading-[0.9]">USER VOICES</h2>
+            </Reveal>
+            <div className="grid gap-12">
+              {reviews.length === 0 ? (
+                <div className="p-12 border border-white/5 rounded-3xl opacity-20">
+                  <p className="uppercase font-black tracking-widest text-xs italic text-white">Awaiting high-frequency signals...</p>
                 </div>
-                <div>
-                  <p className="text-white font-black text-[10px] uppercase tracking-widest">{review.author}</p>
-                  <p className="text-white/20 text-[8px] uppercase tracking-widest mt-1">{review.role}</p>
+              ) : reviews.map((review, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  className="p-10 border border-white/5 hover:border-white/20 transition-all rounded-3xl bg-neutral-950/50"
+                >
+                  <div className="flex gap-1 mb-6">
+                    {[...Array(5)].map((_, star) => (
+                      <div key={star} className={`w-1.5 h-1.5 rounded-full ${star < review.rating ? 'bg-white' : 'bg-white/10'}`} />
+                    ))}
+                  </div>
+                  <p className="text-xl font-light text-white/50 mb-8 italic leading-relaxed">"{review.comment}"</p>
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[10px] font-black text-white">{review.name[0]}</div>
+                    <h4 className="font-black text-white uppercase tracking-widest text-[10px]">— {review.name}</h4>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          <div className="w-full lg:w-1/2 bg-neutral-950 border border-white/10 p-12 rounded-3xl sticky top-32">
+            <h3 className="text-xl font-black uppercase text-white tracking-[0.2em] mb-10 italic">LEAVE A REVIEW</h3>
+            <form className="space-y-6" onSubmit={handleReviewSubmit}>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-2">Display Name</label>
+                <input placeholder="Your Name" className="w-full bg-black border border-white/10 rounded-xl px-6 py-4 text-sm font-bold text-white outline-none focus:border-white/40 transition-all uppercase placeholder:text-white/5" value={reviewForm.name} onChange={e => setReviewForm({ ...reviewForm, name: e.target.value })} required />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-2">Email ID (Private)</label>
+                <input type="email" placeholder="email@example.com" className="w-full bg-black border border-white/10 rounded-xl px-6 py-4 text-sm font-bold text-white outline-none focus:border-white/40 transition-all uppercase placeholder:text-white/5" value={reviewForm.email} onChange={e => setReviewForm({ ...reviewForm, email: e.target.value })} required />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-2">Experience Summary</label>
+                <textarea placeholder="Write your bytes..." rows="4" className="w-full bg-black border border-white/10 rounded-2xl px-6 py-4 text-sm font-bold text-white outline-none focus:border-white/40 transition-all uppercase placeholder:text-white/5 resize-none" value={reviewForm.comment} onChange={e => setReviewForm({ ...reviewForm, comment: e.target.value })} required />
+              </div>
+              <div className="flex items-center gap-4 py-2">
+                <span className="text-[10px] font-black uppercase tracking-widest text-white/20">Rating</span>
+                <div className="flex gap-2">
+                  {[1, 2, 3, 4, 5].map(star => (
+                    <button key={star} type="button" onClick={() => setReviewForm({ ...reviewForm, rating: star })} className={`w-8 h-8 rounded-full border transition-all ${reviewForm.rating >= star ? 'bg-white border-white' : 'border-white/10 hover:border-white/30'}`} />
+                  ))}
                 </div>
               </div>
-            </motion.div>
-          ))}
+              <button disabled={submitting} className="w-full py-5 bg-white text-black font-black uppercase tracking-[0.3em] rounded-full hover:bg-neutral-200 transition-all disabled:opacity-20 flex items-center justify-center gap-4">
+                {submitting ? 'Transmitting...' : 'Send Byte'} <Zap size={16} />
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </section>
@@ -1116,12 +1071,12 @@ const AppContents = () => {
             <Hero />
             <ProgressInfo />
             <Features />
-            <AboutCompany data={aboutData} />
+            <TeamSection data={aboutData} />
             <QuoteSection />
             <ServicesInfo />
             <Testimonials />
             <Blog />
-            <CTA />
+            <CTA settings={settingsData} />
           </>
         } />
         <Route path="/portfolio" element={<Portfolio Reveal={Reveal} />} />

@@ -16,6 +16,7 @@ const quoteRoutes = require('./routes/quoteRoutes');
 const aboutRoutes = require('./routes/aboutRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -24,6 +25,7 @@ app.use('/api/quotes', quoteRoutes);
 app.use('/api/about', aboutRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 app.get('/', (req, res) => {
     res.send('INCODEX Server is Running');
