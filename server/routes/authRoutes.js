@@ -23,20 +23,7 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// For initial setup (Optional: You can delete this after created)
-router.post('/setup', async (req, res) => {
-    try {
-        const { username, password } = req.body;
-        const existing = await Admin.findOne({ username });
-        if (existing) return res.status(400).json({ message: 'Admin already exists' });
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newAdmin = new Admin({ username, password: hashedPassword });
-        await newAdmin.save();
-        res.json({ message: 'Admin created successfully' });
-    } catch (err) {
-        res.status(500).json({ message: 'Server Error', error: err.message });
-    }
-});
+// Initial setup route removed for security after account creation.
 
 // Change Password
 router.post('/change-password', require('../middleware/authMiddleware'), async (req, res) => {
