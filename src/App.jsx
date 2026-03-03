@@ -66,12 +66,6 @@ const Navbar = () => {
             <NavLink to="/#contact">Contact</NavLink>
           </div>
 
-          <div className="hidden md:block">
-            <Link to="/#contact" className="bg-white hover:bg-neutral-200 text-black px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all shadow-xl">
-              Initiate Project
-            </Link>
-          </div>
-
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -257,10 +251,10 @@ const Hero = () => {
             transition={{ duration: 0.5, delay: 0.8 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-6"
           >
-            <button className="bg-white text-black px-12 py-6 rounded-full font-black text-lg flex items-center group hover:bg-neutral-200 transition-all duration-300 shadow-2xl relative overflow-hidden">
-              <span className="relative z-10 uppercase tracking-[0.2em]">START PROJECT</span>
+            <a href="#quote" className="bg-white text-black px-12 py-6 rounded-full font-black text-lg flex items-center group hover:bg-neutral-200 transition-all duration-300 shadow-2xl relative overflow-hidden">
+              <span className="relative z-10 uppercase tracking-[0.2em]">BUILD PROJECT</span>
               <ArrowRight className="ml-3 group-hover:translate-x-2 transition-transform relative z-10" />
-            </button>
+            </a>
           </motion.div>
         </div>
       </div>
@@ -528,7 +522,7 @@ const QuoteSection = () => {
         <form className="space-y-8" onSubmit={handleSubmit}>
           <div className="grid md:grid-cols-2 gap-8">
             <div className="space-y-3">
-              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 ml-4">First Name</label>
+              <label className="text-[10px] font-black tracking-[0.3em] text-white/30 ml-4">First Name</label>
               <input
                 type="text"
                 placeholder="John"
@@ -537,7 +531,7 @@ const QuoteSection = () => {
               />
             </div>
             <div className="space-y-3">
-              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 ml-4">Last Name</label>
+              <label className="text-[10px] font-black tracking-[0.3em] text-white/30 ml-4">Last Name</label>
               <input
                 type="text"
                 placeholder="Doe"
@@ -549,7 +543,7 @@ const QuoteSection = () => {
 
           <div className="grid md:grid-cols-2 gap-8">
             <div className="space-y-3">
-              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 ml-4">Email Address</label>
+              <label className="text-[10px] font-black tracking-[0.3em] text-white/30 ml-4">Email Address</label>
               <input
                 type="email"
                 placeholder="john@example.com"
@@ -558,7 +552,7 @@ const QuoteSection = () => {
               />
             </div>
             <div className="space-y-3">
-              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 ml-4">Subject</label>
+              <label className="text-[10px] font-black tracking-[0.3em] text-white/30 ml-4">Subject</label>
               <input
                 type="text"
                 placeholder="Project Inquiry"
@@ -571,7 +565,7 @@ const QuoteSection = () => {
           {/* Service Multi-select */}
           <div className="space-y-6">
             <div className="flex items-end justify-between px-4 mb-2">
-              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30">Select Services</label>
+              <label className="text-[10px] font-black tracking-[0.3em] text-white/30">Select Services</label>
               <div className="text-right">
                 <span className="text-[8px] font-black uppercase tracking-[0.4em] text-white/20 block mb-1">Estimated Investment</span>
                 <motion.div
@@ -604,7 +598,7 @@ const QuoteSection = () => {
           </div>
 
           <div className="space-y-3">
-            <label className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 ml-4">Your Message</label>
+            <label className="text-[10px] font-black tracking-[0.3em] text-white/30 ml-4">Your Message</label>
             <textarea
               rows="6"
               placeholder="Tell us about your project..."

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash, Check, Plus, LogOut, ChevronRight, MessageSquare, BookOpen, Eye, Edit3, Image as ImageIcon, Users, Settings as SettingsIcon, Mail, Phone, MapPin, Globe, Share2, Quote, Lock, Zap, DollarSign, Layout, MoreVertical, Menu, X } from 'lucide-react';
+import { Trash, Check, Plus, LogOut, ChevronRight, MessageSquare, BookOpen, Eye, Edit3, Image as ImageIcon, Users, Settings as SettingsIcon, Mail, Phone, MapPin, Globe, Share2, Quote, Lock, Zap, DollarSign, Layout, MoreVertical, Menu, X, ExternalLink } from 'lucide-react';
 
 const getApiUrl = () => {
     let base = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -427,7 +428,7 @@ const Admin = () => {
                     </div>
                     <form className="space-y-6" onSubmit={handleLogin}>
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 ml-4">Username</label>
+                            <label className="text-[10px] font-black tracking-[0.3em] text-white/30 ml-4">Username</label>
                             <input
                                 type="text"
                                 placeholder="admin"
@@ -437,7 +438,7 @@ const Admin = () => {
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 ml-4">Password</label>
+                            <label className="text-[10px] font-black tracking-[0.3em] text-white/30 ml-4">Password</label>
                             <input
                                 type="password"
                                 placeholder="••••••••"
@@ -474,7 +475,9 @@ const Admin = () => {
             <nav className="fixed top-0 left-0 w-full z-[100] bg-black/80 backdrop-blur-xl border-b border-white/5">
                 <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
                     <div className="flex items-center gap-10">
-                        <img src="/inc-02.png" alt="INCODEX" className="h-5 opacity-80" />
+                        <Link to="/" className="flex items-center gap-2 group">
+                            <img src="/inc-02.png" alt="INCODEX" className="h-5 opacity-80 group-hover:opacity-100 transition-opacity" />
+                        </Link>
                         <div className="hidden lg:flex items-center gap-8">
                             <AdminNavLink active={activeTab === 'quotes'} onClick={() => setActiveTab('quotes')} icon={MessageSquare}>Quotes</AdminNavLink>
                             <AdminNavLink active={activeTab === 'blogs'} onClick={() => setActiveTab('blogs')} icon={BookOpen}>Journal</AdminNavLink>
@@ -488,13 +491,21 @@ const Admin = () => {
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <div className="hidden lg:block">
+                        <div className="hidden lg:flex items-center gap-4 border-l border-white/10 ml-4 pl-4 font-bold text-white/50">
+                            <button
+                                onClick={() => window.location.href = '/'}
+                                className="flex items-center gap-2 text-[8px] uppercase tracking-widest hover:text-white transition-all"
+                            >
+                                <ExternalLink size={11} />
+                                View Site
+                            </button>
+                            <div className="w-1 h-1 bg-white/20 rounded-full" />
                             <button
                                 onClick={handleLogout}
-                                className="bg-white hover:bg-neutral-200 text-black px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all shadow-xl flex items-center gap-2 group"
+                                className="flex items-center gap-2 text-[8px] uppercase tracking-widest text-red-500/50 hover:text-red-500 transition-all"
                             >
-                                <LogOut size={12} className="group-hover:-translate-x-1 transition-transform" />
-                                <span>Sign Out</span>
+                                <LogOut size={11} />
+                                Sign Out
                             </button>
                         </div>
 
@@ -518,6 +529,23 @@ const Admin = () => {
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                             className="fixed inset-0 top-0 left-0 w-full h-screen bg-black/95 backdrop-blur-2xl z-[90] flex flex-col pt-32 px-10 gap-8 lg:hidden"
                         >
+                            <div className="flex gap-4">
+                                <button
+                                    className="flex-grow flex items-center justify-center gap-3 p-4 rounded-2xl bg-white/5 border border-white/5 text-white/40 hover:text-white transition-all font-bold"
+                                    onClick={() => window.location.href = '/'}
+                                >
+                                    <ExternalLink size={18} />
+                                    <span className="text-xs uppercase tracking-widest">Site</span>
+                                </button>
+                                <button
+                                    className="flex-grow flex items-center justify-center gap-3 p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-500/60 hover:text-red-500 transition-all font-bold"
+                                    onClick={handleLogout}
+                                >
+                                    <LogOut size={18} />
+                                    <span className="text-xs uppercase tracking-widest">Exit</span>
+                                </button>
+                            </div>
+                            <div className="h-px bg-white/5" />
                             <nav className="flex flex-col gap-4">
                                 {[
                                     { id: 'quotes', icon: MessageSquare, label: 'Quotes' },
@@ -543,15 +571,7 @@ const Admin = () => {
                                 ))}
                             </nav>
 
-                            <div className="mt-auto pb-20 border-t border-white/5 pt-10">
-                                <button
-                                    onClick={handleLogout}
-                                    className="flex items-center gap-6 p-4 rounded-2xl text-red-500 hover:bg-red-500/10 transition-all w-full"
-                                >
-                                    <LogOut size={20} />
-                                    <span className="text-xl font-black uppercase tracking-tighter">Sign Out</span>
-                                </button>
-                            </div>
+
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -635,7 +655,7 @@ const Admin = () => {
                                 <h2 className="text-sm font-black uppercase tracking-[0.4em] mb-8 text-white/50">{editingId ? 'Edit Journal' : 'Publish New'}</h2>
                                 <form className="space-y-5" onSubmit={handleAddBlog}>
                                     <div className="space-y-2">
-                                        <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/30 ml-2">Journal Cover</label>
+                                        <label className="text-[9px] font-black tracking-[0.3em] text-white/30 ml-2">Journal Cover</label>
                                         <div className="aspect-video bg-black border border-white/5 rounded-2xl overflow-hidden relative group">
                                             {blogForm.image ? (
                                                 <img src={blogForm.image} className="w-full h-full object-cover" alt="" />
@@ -654,7 +674,7 @@ const Admin = () => {
                                         </div>
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/30 ml-2">Blog Title</label>
+                                        <label className="text-[9px] font-black tracking-[0.3em] text-white/30 ml-2">Blog Title</label>
                                         <input
                                             type="text"
                                             className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm"
@@ -664,7 +684,7 @@ const Admin = () => {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/30 ml-2">Slug (URL path)</label>
+                                        <label className="text-[9px] font-black tracking-[0.3em] text-white/30 ml-2">Slug (URL path)</label>
                                         <input
                                             type="text"
                                             className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm"
@@ -674,7 +694,7 @@ const Admin = () => {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/30 ml-2">Excerpt (Brief)</label>
+                                        <label className="text-[9px] font-black tracking-[0.3em] text-white/30 ml-2">Excerpt (Brief)</label>
                                         <textarea
                                             rows="3"
                                             className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm resize-none"
@@ -683,7 +703,7 @@ const Admin = () => {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/30 ml-2">Content (Journal Body)</label>
+                                        <label className="text-[9px] font-black tracking-[0.3em] text-white/30 ml-2">Content (Journal Body)</label>
                                         <textarea
                                             rows="6"
                                             className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm resize-none"
@@ -784,23 +804,23 @@ const Admin = () => {
                                             </div>
                                         </div>
                                         <div className="space-y-1">
-                                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/30 ml-2">Project Title</label>
+                                            <label className="text-[9px] font-black tracking-[0.3em] text-white/30 ml-2">Project Title</label>
                                             <input className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm font-bold" value={projectForm.title} onChange={(e) => setProjectForm({ ...projectForm, title: e.target.value })} required />
                                         </div>
                                         <div className="space-y-1">
-                                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/30 ml-2">Subtitle</label>
+                                            <label className="text-[9px] font-black tracking-[0.3em] text-white/30 ml-2">Subtitle</label>
                                             <input className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm" value={projectForm.subtitle} onChange={(e) => setProjectForm({ ...projectForm, subtitle: e.target.value })} />
                                         </div>
                                         <div className="space-y-1">
-                                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/30 ml-2">Live URL</label>
+                                            <label className="text-[9px] font-black tracking-[0.3em] text-white/30 ml-2">Live URL</label>
                                             <input className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm" value={projectForm.url} onChange={(e) => setProjectForm({ ...projectForm, url: e.target.value })} required />
                                         </div>
                                         <div className="space-y-1">
-                                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/30 ml-2">Category</label>
+                                            <label className="text-[9px] font-black tracking-[0.3em] text-white/30 ml-2">Category</label>
                                             <input className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm" value={projectForm.category} onChange={(e) => setProjectForm({ ...projectForm, category: e.target.value })} required />
                                         </div>
                                         <div className="space-y-1">
-                                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/30 ml-2">Description</label>
+                                            <label className="text-[9px] font-black tracking-[0.3em] text-white/30 ml-2">Description</label>
                                             <textarea rows="4" className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm resize-none" value={projectForm.description} onChange={(e) => setProjectForm({ ...projectForm, description: e.target.value })} required />
                                         </div>
                                     </div>
@@ -889,7 +909,7 @@ const Admin = () => {
                                         <input placeholder="Price Range (e.g. $100 - $500)" className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm font-bold" value={serviceForm.priceRange} onChange={e => setServiceForm({ ...serviceForm, priceRange: e.target.value })} />
 
                                         <div className="space-y-2">
-                                            <label className="text-[9px] font-black uppercase tracking-widest text-white/20">Features</label>
+                                            <label className="text-[9px] font-black tracking-widest text-white/20">Features</label>
                                             <div className="flex gap-2">
                                                 <input placeholder="New Feature" className="flex-grow bg-black border border-white/10 rounded-xl px-4 py-2 text-xs" value={serviceItem} onChange={e => setServiceItem(e.target.value)} />
                                                 <button onClick={() => { if (serviceItem) { setServiceForm({ ...serviceForm, items: [...serviceForm.items, serviceItem] }); setServiceItem(''); } }} className="bg-white/5 border border-white/10 px-4 rounded-xl hover:bg-white/10"><Plus size={14} /></button>

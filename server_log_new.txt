@@ -1,0 +1,18 @@
+[dotenv@17.3.1] injecting env (10) from server\.env -- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`
+--- Initializing Command Center ---
+[dotenv@17.3.1] injecting env (0) from server\.env -- tip: 🛡️ auth for agents: https://vestauth.com
+Cloudinary Ready: { cloud: 'ducsitqpr', key: 'PRESENT', secret: 'PRESENT' }
+Server is listening on port 5000
+MongoDB Connected Successfully
+[2026-03-03T17:01:15.796Z] OPTIONS /api/projects/add
+[2026-03-03T17:01:15.811Z] POST /api/projects/add
+[2026-03-03T17:01:16.577Z] OPTIONS /api/projects
+[2026-03-03T17:01:16.604Z] GET /api/projects
+[2026-03-03T17:01:36.291Z] GET /api/about
+[2026-03-03T17:01:36.301Z] GET /api/projects
+[2026-03-03T17:01:36.307Z] GET /api/services
+[2026-03-03T17:01:36.316Z] GET /api/settings
+[2026-03-03T17:01:36.326Z] GET /api/expertise
+[2026-03-03T17:01:36.448Z] GET /api/projects
+[2026-03-03T17:01:44.989Z] OPTIONS /api/projects
+[2026-03-03T17:01:44.992Z] OPTIONS /api/projects
