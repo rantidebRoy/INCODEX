@@ -1,4 +1,6 @@
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Layout, Link as LinkIcon, ChevronRight, X, Maximize2, ExternalLink, Globe, Monitor, Smartphone, Tablet, Loader } from 'lucide-react';
 
 const getApiUrl = () => {
@@ -82,7 +84,7 @@ const Portfolio = ({ Reveal }) => {
                                         alt={project.title}
                                         className="absolute inset-0 w-full h-full object-contain p-8 opacity-70 group-hover:scale-110 transition-transform duration-700 bg-black/40"
                                         onError={(e) => { e.target.style.display = 'none'; }}
-                                        Lay />
+                                    />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent z-10" />
 
                                     {/* Overlay Icon */}

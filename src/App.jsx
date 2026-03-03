@@ -8,7 +8,7 @@ import {
   useLocation,
   useParams
 } from 'react-router-dom';
-import { Menu, X, ArrowRight, Shield, Zap, Globe, Layout, ChevronRight, Github, Twitter, Linkedin, Sun, Moon, Link as LinkIcon, ShoppingCart, Quote, User } from 'lucide-react';
+import { Menu, X, ArrowRight, Shield, Zap, Globe, Layout, ChevronRight, Github, Twitter, Linkedin, Sun, Moon, Link as LinkIcon, ShoppingCart, Quote, User, Image as ImageIcon, Monitor, Smartphone } from 'lucide-react';
 import Portfolio from './Portfolio';
 import Admin from './Admin';
 import axios from 'axios';
