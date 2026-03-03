@@ -10,11 +10,17 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
+console.log('Cloudinary Ready:', {
+    cloud: process.env.CLOUDINARY_CLOUD_NAME,
+    key: process.env.CLOUDINARY_API_KEY ? 'PRESENT' : 'MISSING',
+    secret: process.env.CLOUDINARY_API_SECRET ? 'PRESENT' : 'MISSING'
+});
+
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
         folder: 'incodex_blogs',
-        allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
+        allowed_formats: ['jpg', 'png', 'jpeg', 'webp', 'avif'],
     },
 });
 

@@ -7,6 +7,12 @@ require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 const app = express();
 
 // Middleware
+console.log('--- Initializing Command Center ---');
+app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+    next();
+});
+
 const allowedOrigins = process.env.ALLOWED_ORIGINS
     ? process.env.ALLOWED_ORIGINS.split(',')
     : ['http://localhost:5173', 'http://localhost:5174'];
@@ -53,6 +59,14 @@ app.get('/api', (req, res) => {
 
 app.get('/', (req, res) => {
     res.send('INCODEX Server is Running');
+});
+
+// Server-side Error Handler (Capturing Multer/Cloudinary crashes)
+app.use((err, req, res, next) => {
+    console.error('--- EXCEPTION DETECTED ---');
+    console.error('Message:', err.message);
+    console.error('Stack:', err.stack);
+    res.status(500).json({ message: 'Internal Server Error', detail: err.message });
 });
 
 // Database Connection
