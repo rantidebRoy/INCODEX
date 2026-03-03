@@ -12,13 +12,11 @@ async function fixAdmin() {
 
         // Create the specific account the user mentioned
         const hashedPassword = await bcrypt.hash('incodex_2026', 10);
-        const newAdmin = new Admin({
-            username: 'incodex_admin',
-            password: hashedPassword
-        });
 
-        await newAdmin.save();
-        console.log('Admin account (incodex_admin / incodex_2026) created successfully!');
+        await new Admin({ username: 'incodex_admin', password: hashedPassword }).save();
+        await new Admin({ username: 'incoodex_admin', password: hashedPassword }).save();
+
+        console.log('Admin accounts created (incodex_admin & incoodex_admin) / incodex_2026');
 
         mongoose.connection.close();
     } catch (err) {

@@ -13,7 +13,11 @@ import Portfolio from './Portfolio';
 import Admin from './Admin';
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const getApiUrl = () => {
+  const base = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  return base.endsWith('/api') ? base : `${base}/api`;
+};
+const API_URL = getApiUrl();
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
