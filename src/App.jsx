@@ -14,7 +14,8 @@ import Admin from './Admin';
 import axios from 'axios';
 
 const getApiUrl = () => {
-  const base = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  let base = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  if (base.endsWith('/')) base = base.slice(0, -1);
   return base.endsWith('/api') ? base : `${base}/api`;
 };
 const API_URL = getApiUrl();

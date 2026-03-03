@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import { Trash, Check, Plus, LogOut, ChevronRight, MessageSquare, BookOpen, Eye, Edit3, Image as ImageIcon, Users, Settings as SettingsIcon, Mail, Phone, MapPin, Globe, Share2, Quote, Lock } from 'lucide-react';
 
 const getApiUrl = () => {
-    const base = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    let base = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    if (base.endsWith('/')) base = base.slice(0, -1);
     return base.endsWith('/api') ? base : `${base}/api`;
 };
 const API_URL = getApiUrl();
